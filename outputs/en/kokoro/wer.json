@@ -1,0 +1,152 @@
+{
+  "lang": "en",
+  "asr_model": "large-v3",
+  "corpus_wer": 0.0132,
+  "n_utterances": 12,
+  "utterances": [
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 10,
+      "asr_raw": "Please call me back when you get a chance today.",
+      "ref_norm": "please call me back when you get a chance today",
+      "hyp_norm": "please call me back when you get a chance today",
+      "id": "en_01",
+      "type": "latency"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 10,
+      "asr_raw": "Welcome to Customer Support. How can I help you today?",
+      "ref_norm": "welcome to customer support how can i help you today",
+      "hyp_norm": "welcome to customer support how can i help you today",
+      "id": "en_02",
+      "type": "short"
+    },
+    {
+      "wer": 0.2,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 1,
+      "ref_words": 10,
+      "asr_raw": "Your appointment is on March 23rd at 3, 45 p.m.",
+      "ref_norm": "your appointment is on march 23rd at 3 45 pm",
+      "hyp_norm": "your appointment is on march 23rd at 3 45 p m",
+      "id": "en_03",
+      "type": "numbers"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 9,
+      "asr_raw": "The total comes to $1,249.99, including shipping and taxes.",
+      "ref_norm": "the total comes to $1249.99 including shipping and taxes",
+      "hyp_norm": "the total comes to $1249.99 including shipping and taxes",
+      "id": "en_04",
+      "type": "currency"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 12,
+      "asr_raw": "Dr. Priya Krishnamurthy will meet Mr. O'Connell at the Nairobi conference.",
+      "ref_norm": "doctor priya krishnamurthy will meet mister 0 connell at the nairobi conference",
+      "hyp_norm": "doctor priya krishnamurthy will meet mister 0 connell at the nairobi conference",
+      "id": "en_05",
+      "type": "names"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 10,
+      "asr_raw": "Would you prefer the morning flight or the evening one?",
+      "ref_norm": "would you prefer the morning flight or the evening one",
+      "hyp_norm": "would you prefer the morning flight or the evening one",
+      "id": "en_06",
+      "type": "question"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 31,
+      "asr_raw": "Although the weather forecast predicted heavy rain across the coastal regions, thousands of runners still gathered at dawn for the annual marathon, cheering as the first group crossed the starting line.",
+      "ref_norm": "although the weather forecast predicted heavy rain across the coastal regions 1000s of runners still gathered at dawn for the annual marathon cheering as the 1st group crossed the starting line",
+      "hyp_norm": "although the weather forecast predicted heavy rain across the coastal regions 1000s of runners still gathered at dawn for the annual marathon cheering as the 1st group crossed the starting line",
+      "id": "en_07",
+      "type": "long"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 12,
+      "asr_raw": "I can't believe we actually won the championship. This is incredible.",
+      "ref_norm": "i can not believe we actually won the championship this is incredible",
+      "hyp_norm": "i can not believe we actually won the championship this is incredible",
+      "id": "en_08",
+      "type": "emotion"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 13,
+      "asr_raw": "Please restart the router, wait 30 seconds, and then reconnect to the network.",
+      "ref_norm": "please restart the router wait 30 seconds and then reconnect to the network",
+      "hyp_norm": "please restart the router wait 30 seconds and then reconnect to the network",
+      "id": "en_09",
+      "type": "tech"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 14,
+      "asr_raw": "She sells seashells by the seashore, and the shells she sells are surely seashells.",
+      "ref_norm": "she sells seashells by the seashore and the shells she sells are surely seashells",
+      "hyp_norm": "she sells seashells by the seashore and the shells she sells are surely seashells",
+      "id": "en_10",
+      "type": "tongue"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 10,
+      "asr_raw": "The NASA and ISRO satellite NISAR launched in July 2025.",
+      "ref_norm": "the nasa and isro satellite nisar launched in july 2025",
+      "hyp_norm": "the nasa and isro satellite nisar launched in july 2025",
+      "id": "en_11",
+      "type": "acronym"
+    },
+    {
+      "wer": 0.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 0,
+      "ref_words": 11,
+      "asr_raw": "The library closes at 9 on weekdays and 6 on weekends.",
+      "ref_norm": "the library closes at 9 on weekdays and 6 on weekends",
+      "hyp_norm": "the library closes at 9 on weekdays and 6 on weekends",
+      "id": "en_12",
+      "type": "neutral"
+    }
+  ]
+}
