@@ -16,6 +16,21 @@
   },
   {
     "lang": "ar",
+    "model": "habibi",
+    "rtf_median": 5.005,
+    "latency_full_s": 36.4295,
+    "first_chunk_s": 36.4295,
+    "cold_load_s": 6.375,
+    "engine": "Habibi-TTS MSA (F5v1)",
+    "wer": 0.094,
+    "distill_mos": 4.442,
+    "utmos": 2.933,
+    "speaker_cosine": 0.7794,
+    "sim_ceiling": 0.8509,
+    "sim_floor": 0.0642
+  },
+  {
+    "lang": "ar",
     "model": "mms",
     "rtf_median": 0.222,
     "latency_full_s": 1.2222,

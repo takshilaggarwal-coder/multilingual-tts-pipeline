@@ -1,0 +1,14 @@
+{
+  "en": {
+    "distill_mos": 4.547,
+    "utmos": 4.311
+  },
+  "ar": {
+    "distill_mos": 4.388,
+    "utmos": 3.019
+  },
+  "hi": {
+    "distill_mos": 4.594,
+    "utmos": 3.683
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "outdir": "../outputs/ar/habibi",
+  "mean_distill_mos": 4.442,
+  "mean_utmos": 2.933,
+  "n": 12,
+  "utterances": [
+    {
+      "distill_mos": 4.365,
+      "utmos": 3.263,
+      "id": "ar_01"
+    },
+    {
+      "distill_mos": 4.707,
+      "utmos": 3.092,
+      "id": "ar_02"
+    },
+    {
+      "distill_mos": 4.621,
+      "utmos": 3.03,
+      "id": "ar_03"
+    },
+    {
+      "distill_mos": 4.486,
+      "utmos": 2.913,
+      "id": "ar_04"
+    },
+    {
+      "distill_mos": 4.579,
+      "utmos": 3.163,
+      "id": "ar_05"
+    },
+    {
+      "distill_mos": 4.404,
+      "utmos": 3.289,
+      "id": "ar_06"
+    },
+    {
+      "distill_mos": 4.62,
+      "utmos": 2.832,
+      "id": "ar_07"
+    },
+    {
+      "distill_mos": 3.699,
+      "utmos": 2.767,
+      "id": "ar_08"
+    },
+    {
+      "distill_mos": 4.249,
+      "utmos": 2.719,
+      "id": "ar_09"
+    },
+    {
+      "distill_mos": 4.627,
+      "utmos": 2.76,
+      "id": "ar_10"
+    },
+    {
+      "distill_mos": 4.529,
+      "utmos": 2.506,
+      "id": "ar_11"
+    },
+    {
+      "distill_mos": 4.422,
+      "utmos": 2.856,
+      "id": "ar_12"
+    }
+  ]
+}

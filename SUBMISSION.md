@@ -6,18 +6,20 @@ Full licensing + limitations: `notes/LIMITATIONS_AND_DISCLOSURE.md`.
 
 ## Recommended setup (one paragraph)
 
-Use a **per-language router of open-source models, MLX-first for Apple Silicon.** For the
-**default (fast, fixed-voice) path**: **English and Hindi → Kokoro-82M** (Apache-2.0) and
-**Arabic → Habibi-TTS MSA** (Apache-2.0) or the MMS VITS floor when footprint must be tiny.
-For **voice cloning in any of the three languages → Chatterbox-Multilingual (4-bit MLX)**
-(one 607 MB checkpoint, Apache/MIT, unwatermarked on this path). On an 8 GB M2, Kokoro is
-the standout — RTF ~0.09, ~0.3 s latency, 1.3 % English WER, predicted MOS ~4.6 — comfortably
-beating every latency/RTF/intelligibility target; cloning costs real time (Chatterbox RTF
-~1.07, 4–5 s full clips) but delivers same-speaker identity (Hindi cosine 0.87; English/Arabic
-~0.73, i.e. ~90 % of the real-vs-real ceiling). The whole evaluation stack is open-source
-(faster-whisper + a Hindi-tuned Whisper cross-check for WER, Distill-MOS + UTMOS for predicted
-naturalness, SpeechBrain ECAPA for speaker cosine, a blinded P.808-style human kit). No closed
-API is used anywhere, for generation or evaluation.
+Use a **per-language router of open-source models, MLX-first for Apple Silicon**, split by
+whether the request needs a *fixed voice fast* or a *cloned voice*. **Fast fixed-voice path:
+English and Hindi → Kokoro-82M** (Apache-2.0) — RTF ~0.09, ~0.3–0.5 s latency, 1.3 % English
+WER, predicted MOS ~4.6, beating every latency/RTF/intelligibility target on a fanless laptop.
+**Voice cloning, any of the three languages → Chatterbox-Multilingual (4-bit MLX)** — one
+607 MB Apache/MIT checkpoint, unwatermarked on this path, same-speaker identity (Hindi cosine
+0.87; English/Arabic ~0.73, i.e. 0.86–0.88 of the real-vs-real ceiling) at the honest cost of
+real time (RTF ~1.07, 4–5 s clips). **Arabic** is the hard case: its only *fast* option is the
+robotic MMS VITS floor, while the *quality/accuracy* winner is **Habibi-TTS MSA** (Apache-2.0,
+F5 fine-tune) — best Arabic WER (9.4 %) and cloning (cosine 0.779), predicted MOS at
+real-speech level — but RTF ~5 makes it offline/batch-only here. The whole evaluation stack is
+open-source (faster-whisper + a Hindi-tuned Whisper cross-check for WER, Distill-MOS + UTMOS
+for predicted naturalness, SpeechBrain ECAPA for speaker cosine, a blinded P.808-style human
+kit). No closed API is used anywhere, for generation or evaluation.
 
 ## Hardware
 
@@ -41,11 +43,24 @@ chunk · RTF ≤ 0.5 · round-trip WER ≤ 0.10.
 | HI | Chatterbox-ML 4bit (clone) | 4.57 / 3.73 | **0.870** | 4.98 s / 1.52 s | 1.07 | 22.8 % | ✓ |
 | AR | MMS-TTS +digit-verbalize (floor) | 4.44 / 3.37 | — | 0.73 s / 0.73 s | 0.126 | 22.1 % | ✗ |
 | AR | Chatterbox-ML 4bit (clone) | 4.58 / 3.15 | 0.743 | 5.63 s / 1.81 s | 1.06 | **13.4 %** | ✓ |
-| **AR** | **Habibi-TTS MSA** (specialist) | _pending_ | _pending_ | _pending_ | _pending_ | _pending_ | ✓ |
+| **AR** | **Habibi-TTS MSA** (specialist) | 4.44 / 2.93 | **0.779** | 36.4 s / 36.4 s | 5.0 | **9.4 %** | ✓ |
 
 \* Hindi WER is ASR-bound, not TTS-bound — see failure modes. D/U = Distill-MOS / UTMOS,
 English-trained proxies (not a substitute for the human panel; for AR/HI read against the
 real-speech anchor, not the absolute value).
+
+**Predicted MOS vs. real-speech anchors** (same predictors, this language's reference speaker) —
+absolute cross-language MOS is invalid, so read TTS against its anchor:
+
+| Lang | real anchor D / U | best TTS here D / U |
+|---|---|---|
+| EN | 4.55 / 4.31 | Kokoro 4.63 / 4.51 (≈/above real — clean TTS > expressive audiobook on these predictors) |
+| AR | 4.39 / **3.02** | Habibi 4.44 / 2.93, Chatterbox 4.58 / 3.15 (**at real-speech level** — the low UTMOS is the predictor's Arabic bias, not the audio) |
+| HI | 4.59 / 3.68 | Kokoro 4.64 / 4.26 (≈/above real) |
+
+The Arabic anchor (UTMOS 3.02 on genuine human speech) is the headline: every Arabic TTS here
+lands at or above it, so the low absolute UTMOS numbers say more about the English-trained
+predictor than about naturalness — the human panel is the arbiter.
 
 **Speaker-cosine note.** The cosine is from VoxCeleb-trained ECAPA-TDNN; a generic "0.75"
 is embedding-specific. For *this* embedding, genuine same-speaker pairs top out ~0.72–0.80
@@ -54,13 +69,14 @@ and real-vs-other floor F (`run_sim.py --ref2/--other`):
 
 | Lang | clone cosine S | ceiling C | floor F | normalized (S−F)/(C−F) |
 |---|---|---|---|---|
-| EN | 0.725 (min 0.60) | 0.819 | 0.036 | 0.88 |
-| AR | 0.743 (min 0.67) | 0.851 | 0.064 | 0.86 |
-| HI | 0.870 (min 0.80) | 0.905 | 0.025 | 0.96 |
+| EN (Chatterbox) | 0.725 (min 0.60) | 0.819 | 0.036 | 0.88 |
+| AR (Chatterbox) | 0.743 (min 0.67) | 0.851 | 0.064 | 0.86 |
+| AR (Habibi MSA) | 0.779 (min —) | 0.851 | 0.064 | 0.91 |
+| HI (Chatterbox) | 0.870 (min 0.80) | 0.905 | 0.025 | 0.96 |
 
-So all three clones are **clearly the same speaker** — Hindi outright clears 0.75; English
-and Arabic are ~90 % of the way to their own real-vs-real ceiling and nowhere near the
-different-speaker floor.
+So all clones are **clearly the same speaker** — Hindi and Arabic-Habibi outright clear 0.75;
+English and Arabic-Chatterbox are ~86–88 % of the way to their own real-vs-real ceiling and
+nowhere near the different-speaker floor. Habibi is the strongest Arabic clone (0.91 of ceiling).
 
 ## The call, per language, and why
 
@@ -77,13 +93,15 @@ ASR — see below. Chatterbox-ML gives the **best cloning result of the three la
 (cosine 0.87, 0.96 of ceiling) — the clean studio reference helps — though Hindi cloned WER
 (22.8 %) shows the quant model struggles with Hindi intelligibility on hard rows.
 
-**Arabic → Habibi-TTS MSA / Chatterbox for cloning; MMS only as a floor.** The naturalness
-floor (MMS VITS) is intelligible-enough after a digit-verbalization fix (30.2 %→22.1 % WER)
-but sounds robotic (UTMOS 3.27) and can't clone. Chatterbox-ML is the pragmatic pick — best
-Arabic intelligibility measured here (13.4 %), cloning, one model shared with EN/HI. Habibi
-MSA (F5-TTS fine-tune, purpose-built for Arabic, Apache-2.0) is the specialist quality option
-_(numbers pending its run — table above)_. Arabic remains the hardest language: no fast +
-natural + cloning + permissively-licensed option all at once on this hardware.
+**Arabic → Habibi-TTS MSA for quality (offline), Chatterbox for practical cloning; MMS only
+as a floor.** Habibi MSA (F5-TTS fine-tune, purpose-built for Arabic, Apache-2.0) is the
+**accuracy + fidelity winner**: round-trip WER **9.4 %** (the only Arabic system under the 10 %
+bar), best speaker cosine (0.779, 0.91 of ceiling), and predicted MOS at real-speech level —
+but RTF ~5 and 36 s clips make it **strictly offline/batch** on this hardware. Chatterbox-ML is
+the **pragmatic real-time-ish pick**: cloning, 13.4 % WER, one model shared with EN/HI, first
+chunk ~1.8 s. The MMS floor is intelligible after the digit fix (30.2 %→22.1 % WER) but robotic
+and can't clone. Net: Arabic is the hardest language — you can have *natural + accurate +
+cloning* (Habibi) **or** *fast + cloning* (Chatterbox), not both at once on an 8 GB CPU/MPS box.
 
 ## Metrics & methodology (open-source throughout)
 
