@@ -1,0 +1,114 @@
+{
+  "model": "Chatterbox-ML 4bit (en)",
+  "model_ref": "mlx-community/chatterbox-4bit",
+  "device": "mlx-metal",
+  "config": {
+    "lang_code": "en",
+    "ref_audio": "references/en/en_ref_main.wav",
+    "quant": "4bit"
+  },
+  "cold_load_s": 4.524,
+  "machine": {
+    "chip": "Apple M2",
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "python": "3.11.15"
+  },
+  "utterances": [
+    {
+      "id": "en_02",
+      "text": "Welcome to customer support, how can I help you today?",
+      "gen_time_s": 4.7322,
+      "audio_len_s": 3.92,
+      "rtf": 1.2072,
+      "first_chunk_s": 1.2894
+    },
+    {
+      "id": "en_03",
+      "text": "Your appointment is on March 23rd at 3:45 PM.",
+      "gen_time_s": 6.3381,
+      "audio_len_s": 5.84,
+      "rtf": 1.0853,
+      "first_chunk_s": 1.7807
+    },
+    {
+      "id": "en_04",
+      "text": "The total comes to $1,249.99, including shipping and taxes.",
+      "gen_time_s": 7.3665,
+      "audio_len_s": 7.64,
+      "rtf": 0.9642,
+      "first_chunk_s": 2.1315
+    },
+    {
+      "id": "en_05",
+      "text": "Dr. Priya Krishnamurthy will meet Mr. O'Connell at the Nairobi conference.",
+      "gen_time_s": 5.85,
+      "audio_len_s": 5.84,
+      "rtf": 1.0017,
+      "first_chunk_s": 1.7812
+    },
+    {
+      "id": "en_06",
+      "text": "Would you prefer the morning flight or the evening one?",
+      "gen_time_s": 4.2544,
+      "audio_len_s": 3.56,
+      "rtf": 1.1951,
+      "first_chunk_s": 1.0769
+    },
+    {
+      "id": "en_07",
+      "text": "Although the weather forecast predicted heavy rain across the coastal regions, thousands of runners still gathered at dawn for the annual marathon, cheering as the first group crossed the starting line.",
+      "gen_time_s": 10.7645,
+      "audio_len_s": 11.8,
+      "rtf": 0.9122,
+      "first_chunk_s": 3.371
+    },
+    {
+      "id": "en_08",
+      "text": "I can't believe we actually won the championship — this is incredible!",
+      "gen_time_s": 8.1493,
+      "audio_len_s": 6.2,
+      "rtf": 1.3144,
+      "first_chunk_s": 3.537
+    },
+    {
+      "id": "en_09",
+      "text": "Please restart the router, wait thirty seconds, and then reconnect to the network.",
+      "gen_time_s": 6.0625,
+      "audio_len_s": 5.8,
+      "rtf": 1.0453,
+      "first_chunk_s": 1.742
+    },
+    {
+      "id": "en_10",
+      "text": "She sells seashells by the seashore, and the shells she sells are surely seashells.",
+      "gen_time_s": 6.9452,
+      "audio_len_s": 6.92,
+      "rtf": 1.0036,
+      "first_chunk_s": 1.9917
+    },
+    {
+      "id": "en_11",
+      "text": "The NASA and ISRO satellite NISAR launched in July 2025.",
+      "gen_time_s": 8.0956,
+      "audio_len_s": 7.56,
+      "rtf": 1.0709,
+      "first_chunk_s": 2.925
+    },
+    {
+      "id": "en_12",
+      "text": "The library closes at nine on weekdays and six on weekends.",
+      "gen_time_s": 5.782,
+      "audio_len_s": 5.4,
+      "rtf": 1.0707,
+      "first_chunk_s": 1.8036
+    },
+    {
+      "id": "en_01",
+      "text": "Please call me back when you get a chance today.",
+      "gen_time_s": 4.0603,
+      "audio_len_s": 3.2,
+      "rtf": 1.2688,
+      "first_chunk_s": 1.014
+    }
+  ]
+}
