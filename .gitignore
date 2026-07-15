@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+envs/
+.venv/
+*.egg-info/
+.claude/
+hf_cache/
+*.tmp
