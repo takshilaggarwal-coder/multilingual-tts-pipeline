@@ -1,0 +1,49 @@
+## Disclosure & licensing
+
+Every model, runtime, and metric used in this submission, its license, whether it is commercial-safe, and whether it watermarks its output. The **recommended production router — Kokoro-82M + Chatterbox-ML (4-bit) + Habibi MSA — is fully commercial-safe and unwatermarked.** Every non-commercial component below is a benchmark control or eval tool, never a shippable path.
+
+| Component | Role | License | Commercial? | Watermark |
+|---|---|---|---|---|
+| [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) | EN + HI synthesis (fixed voice) | Apache-2.0 | Yes | None |
+| [Chatterbox-ML 4-bit](https://huggingface.co/mlx-community/chatterbox-4bit) (via [mlx-audio](https://github.com/Blaizzy/mlx-audio); upstream [Resemble](https://github.com/resemble-ai/chatterbox)) | Cloning, all 3 langs | MIT (upstream) / Apache-2.0 (4-bit repo) | Yes | **None on these outputs** — see note 1 |
+| [Habibi-TTS — MSA](https://huggingface.co/SWivid/Habibi-TTS) | Arabic specialist (F5-TTS fine-tune) | Apache-2.0 (MSA ckpt) | Yes | None |
+| [F5-TTS base](https://huggingface.co/SWivid/F5-TTS) | Architecture upstream only; **not loaded** | weights CC-BY-NC-4.0 | No | n/a |
+| [mms-tts-ara](https://huggingface.co/facebook/mms-tts-ara) / [mms-tts-hin](https://huggingface.co/facebook/mms-tts-hin) | VITS floor / control only | CC-BY-NC-4.0 | No | None |
+| [mlx-audio](https://github.com/Blaizzy/mlx-audio) | Apple-Silicon TTS runtime | MIT | Yes | n/a |
+| [faster-whisper](https://github.com/SYSTRAN/faster-whisper) + [whisper-large-v3](https://huggingface.co/Systran/faster-whisper-large-v3) | WER ASR (primary) | MIT / Apache-2.0 | Yes | n/a |
+| [vasista22/whisper-hindi-medium](https://huggingface.co/vasista22/whisper-hindi-medium) | Hindi WER cross-check | Apache-2.0 (weights) | Yes (see note 5) | n/a |
+| [Distill-MOS](https://github.com/microsoft/Distill-MOS) + [UTMOS/SpeechMOS](https://github.com/tarepan/SpeechMOS) | Predicted MOS (proxy) | MIT | Yes | n/a |
+| [SpeechBrain ECAPA-TDNN](https://huggingface.co/speechbrain/spkrec-ecapa-voxceleb) | Speaker-similarity cosine | Apache-2.0 (weights) | Yes (see note 5) | n/a |
+| [jiwer](https://github.com/jitsi/jiwer) | WER computation | Apache-2.0 | Yes | n/a |
+| [NISQA](https://github.com/gabrielmittag/NISQA) | Considered, **not used** | code MIT / weights CC-BY-NC-SA-4.0 | No (weights) | n/a |
+
+**Must-disclose notes**
+
+1. **Watermark.** Upstream Resemble Chatterbox applies the PerTh neural watermark to *every* output by default; its packaged `generate()` has no flag to disable it. The 4-bit MLX path actually used here has no PerTh step, so **the delivered Chatterbox WAVs are unwatermarked.** Verified on this machine: the `perth` package is not installed in the MLX venv and mlx-audio's chatterbox module contains no watermark code. (An earlier draft of the README/pipeline comment wrongly stated the outputs were watermarked — corrected 2026-07-15.) If the product ever ships on the official PyTorch Chatterbox path, outputs *will* be watermarked and that must be disclosed to end users.
+2. **Non-commercial components** (mms-tts-ara/hin, F5 base, Habibi Unified/SAU/UAE, NISQA weights) are labeled and kept out of the shippable path; only Habibi MSA (Apache-2.0) is used from that family.
+3. **Habibi lineage caveat.** Habibi MSA is author-designated Apache-2.0, but the card, README, and [arXiv abstract](https://arxiv.org/abs/2601.13802) do not state whether MSA was initialized from the CC-BY-NC-4.0 F5-TTS base weights or trained fresh. We rely on the authors' stated license and flag the undocumented upstream relationship as a residual risk.
+4. **Attribution to bundle.** Apache-2.0 components require a NOTICE + license copy + statement of changes; MIT components require the license + copyright notice; CC-BY-4.0 reference-speaker corpora (LibriTTS-R, Arabic Speech Corpus, SYSPIN) require attribution (documented in `references/LICENSES.md`).
+5. **Eval-dataset caveats (eval-only, low-risk).** ECAPA is VoxCeleb-trained — do not redistribute VoxCeleb; the Hindi Whisper is fine-tuned on GramVaani/ULCA/Shrutilipi/Fleurs (corpus licenses not restated — verify before redistributing weights); Distill-MOS/UTMOS are English-MOS-trained proxies, not valid as absolute cross-language MOS.
+
+## Interpreting speaker similarity
+
+The similarity number is a **cosine similarity** (higher = better) from SpeechBrain's VoxCeleb-trained ECAPA-TDNN, and cosine values are geometry-specific to the embedding: a "0.75" borrowed from a WavLM-based leaderboard or a generic blog is meaningless for this model. For VoxCeleb-ECAPA specifically, `0.25` is only the same/different *verification* boundary, genuine same-speaker recordings top out around ~0.72–0.80 (the ceiling), different speakers sit near ~0.0–0.2, and even strong zero-shot clones land only ~0.45–0.6 — so **0.75 is effectively the same-speaker ceiling, not a realistic pass/fail bar for cloned audio.** Read any measured value against the two per-language anchors we compute with the same embedding — the real-vs-real ceiling `C` (`run_sim.py --ref2`) and the real-vs-other-speaker floor `F` (`--other`) — and report the clone's normalized position `(S−F)/(C−F)` plus the worst-utterance min, never the mean against an absolute target. Anchors are computed per language because ECAPA is English-dominant and can carry a channel/language offset for MSA and Hindi references.
+
+## What's still missing & how I'd improve it
+
+Grouped by language, then cross-cutting. Prioritized within each group; effort noted.
+
+**Arabic**
+- *Number/date/currency reading (highest-frequency failure).* The MMS char-level tokenizer silently drops Arabic-numeral digits, driving deletion-dominated round-trip WER from **30.2% → 22.1%** once `num2words` digit pre-verbalization was added; Chatterbox reads the same digits at 13.4%, confirming this is a frontend/tokenizer problem, not acoustics. **Fix (low effort):** ship a first-class text-normalization stage — num2words + date/time/currency expansion with gender/case agreement, ريال/دولار pluralization, ordinals, and digit-by-digit ID/flight-number reading. Model-agnostic, no retraining.
+- *Diacritization.* No longer a hard blocker for zero-shot models (Habibi, Chatterbox) but still a quality lever, and the VITS floor has no diacritic handling at all. **Fix (low-med):** an optional, model-aware tashkeel stage (CAMeL/catt/Farasa) toggled on only for diacritic-sensitive models, bypassed for zero-shot ones so diacritizer errors don't propagate.
+- *Dialect coverage.* Commercially-usable open Arabic is essentially MSA-only (Habibi's Gulf/Unified checkpoints are CC-BY-NC-SA). **Fix (med-high):** default to Habibi MSA (reported at ElevenLabs-v3-alpha parity), and curriculum-fine-tune MSA→dialect on permissively-licensed data where a specific dialect matters — GPU/offline step.
+
+**Hindi**
+- *Hinglish code-mixing (dominant real-world failure).* Devanagari-only models mishandle inline Latin words; the Hinglish row was Kokoro-hi's worst (WER 0.41), and IndicF5's byte-count duration allocation truncates Roman spans. **Fix (low):** an Indic script-normalization frontend — AI4Bharat IndicXlit to transliterate embedded English into Devanagari, plus the two-line UTF-8-byte duration patch. Higher ceiling (med-high): route to a native mixed-script tokenizer (Chatterbox-ML) or LoRA-fine-tune a permissive base on a real Hinglish corpus.
+- *Digit strings & Indic G2P.* Long ID strings, times, and currency were among the worst Kokoro-hi rows; no clean Devanagari verbalizer in the default stack. **Fix (low):** mirror the Arabic normalization frontend for Hindi (indic-nlp + num2words `hi`).
+
+**Cross-cutting**
+- *Streaming / latency (blocks the <500ms first-chunk target).* The batch models that fit 8GB (Kokoro, MMS) don't stream — their sub-500ms figures only hold for short sentences and scale with total length. Autoregressive Chatterbox runs RTF ~1.08–1.21 / first-chunk 1.3–1.8s on M2, and flow-matching F5/IndicF5/Habibi are RTF ≥1 on MPS. **Fix (med):** chunk-and-stream at clause boundaries over the on-device batch models to decouple first-audio from length; apply Empirically-Pruned Step Sampling to cut flow-matching NFE 32→~7 (low); be explicit that AR cloning is offline-grade and route latency-critical requests to fixed-voice Kokoro, reserving cloning for batch. True GPU-class first-chunk (CosyVoice2-style) needs off-device hardware.
+- *Predicted-MOS validity.* English-trained predictors disagree by ~1.2 points on the same Arabic clips (Distill 4.45 vs UTMOS 3.27) and saturate near the top, under-resolving the naturalness differences the brief cares about. **Fix:** report an ensemble with its disagreement as an uncertainty band (low); recalibrate against a small target-language human-MOS set (med); treat the blinded native-listener ACR + CMOS panel (kit already built) as the graded metric — the one step that cannot be automated (med-high).
+- *WER de-confounding.* Round-trip WER conflates TTS and ASR error — swapping ASR moved individual rows by up to ±0.4. **Fix (low-med):** report a TTS-attributable WER by cross-checking with a second language-tuned ASR (done for Hindi) and subtracting the same-speaker human-speech ASR floor.
+- *Open-vs-closed gap / license-clean deployment.* No open model wins all three languages or cracks the closed top-10, and the best open cloners carry NC weights. **Fix (med, ongoing):** per-language routing to the best permissive specialist (EN/HI Kokoro, AR Habibi, cloning via Chatterbox) plus targeted fine-tuning, preferring Apache/MIT weights so outputs stay commercially usable — and standardize on one quantized MLX/GGUF model resident at a time as the 8GB pattern.

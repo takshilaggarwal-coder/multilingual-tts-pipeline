@@ -13,7 +13,12 @@ Notes:
 - ref_text must transcribe ref_audio (Chatterbox conditions on both).
 - Reference should be same-language for the similarity metric; cross-lingual
   cloning works but degrades SIM (worth measuring separately).
-- Base Chatterbox outputs carry Resemble's PerTh perceptual watermark (disclosed).
+- Upstream (PyTorch) Chatterbox applies Resemble's PerTh perceptual watermark to
+  every output by default. The 4-bit MLX path used here does NOT: the `perth`
+  package is absent from the mlx venv and mlx-audio's chatterbox module contains
+  no watermark step, so these outputs are unwatermarked. If a deployment ever runs
+  the official PyTorch path, its outputs WILL be watermarked and that must be
+  disclosed to end users.
 """
 import argparse
 import sys

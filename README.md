@@ -88,9 +88,13 @@ status and per-metric analysis live in the write-up (`notes/` + submission doc).
 
 ## Disclosure
 
-- Core generation: open-source models only (Kokoro Apache-2.0; Chatterbox MIT — outputs
-  carry Resemble's PerTh watermark; Habibi MSA checkpoint Apache-2.0; MMS CC-BY-NC-4.0,
-  used only as a disclosed floor/control).
+- Core generation: open-source models only (Kokoro Apache-2.0; Chatterbox MIT upstream /
+  Apache-2.0 4-bit MLX repo; Habibi MSA checkpoint Apache-2.0; MMS CC-BY-NC-4.0, used only
+  as a disclosed floor/control). **Watermark:** upstream PyTorch Chatterbox applies Resemble's
+  PerTh watermark by default, but the 4-bit MLX path used here does not (verified — no `perth`
+  install, no watermark code in mlx-audio's chatterbox module), so the delivered clips are
+  unwatermarked. A production deployment on the PyTorch path would watermark, and that must be
+  disclosed. Full component license table: `notes/LIMITATIONS_AND_DISCLOSURE.md`.
 - Evaluation: fully open-source (no closed APIs anywhere).
 - AI coding assistant (Claude Code) used throughout for research, code, and orchestration,
   as the brief invites; every benchmark number was produced by real runs on the hardware

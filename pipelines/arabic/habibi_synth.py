@@ -30,6 +30,19 @@ def main():
     ap.add_argument("--device", default="mps")
     args = ap.parse_args()
 
+    # torchaudio 2.11 routes .load through torchcodec, which needs ffmpeg shared
+    # libs (absent on this box). f5_tts calls torchaudio.load(ref_audio); shim it
+    # to soundfile so no ffmpeg/torchcodec is required.
+    import soundfile as sf
+    import torch
+    import torchaudio
+
+    def _sf_load(path, *a, **k):
+        data, sr = sf.read(str(path), dtype="float32", always_2d=True)
+        return torch.from_numpy(data.T).contiguous(), sr
+
+    torchaudio.load = _sf_load
+
     from huggingface_hub import hf_hub_download
     from f5_tts.api import F5TTS
 
