@@ -9,9 +9,10 @@ ZIP="../${NAME}.zip"
 rm -f "$ZIP"
 
 zip -r "$ZIP" . \
-  -x 'envs/*' \
+  -x 'envs/*' -x '*/envs/*' -x '*envs/*' \
+  -x '*/.sb_ecapa/*' \
   -x '*/__pycache__/*' -x '*.pyc' \
-  -x '.git/*' -x '.claude/*' \
+  -x '.git/*' -x '*/.git/*' -x '.claude/*' \
   -x 'hf_cache/*' \
   -x 'eval/listening_test/kit/key.json' \
   -x 'results/*.log' \

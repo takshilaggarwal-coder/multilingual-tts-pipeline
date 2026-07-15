@@ -51,10 +51,15 @@ def _utmos():
 
 def _ecapa():
     if "ecapa" not in _CACHE:
+        from pathlib import Path
+
         from speechbrain.inference.speaker import EncoderClassifier
+        # repo-anchored savedir (not CWD-relative) so the 80MB cache always lands
+        # under envs/ (git-ignored) regardless of which dir the eval is launched from
+        savedir = Path(__file__).resolve().parents[1] / "envs" / "eval" / ".sb_ecapa"
         _CACHE["ecapa"] = EncoderClassifier.from_hparams(
             source="speechbrain/spkrec-ecapa-voxceleb",
-            savedir="envs/eval/.sb_ecapa",
+            savedir=str(savedir),
             run_opts={"device": "cpu"},
         )
     return _CACHE["ecapa"]
