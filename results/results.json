@@ -12,6 +12,18 @@
     "utmos": 3.272
   },
   {
+    "lang": "ar",
+    "model": "mms_vd",
+    "rtf_median": 0.126,
+    "latency_full_s": 0.7309,
+    "first_chunk_s": 0.7308,
+    "cold_load_s": 2.222,
+    "engine": "MMS-TTS (ar) +digitverb",
+    "wer": 0.2215,
+    "distill_mos": 4.442,
+    "utmos": 3.371
+  },
+  {
     "lang": "en",
     "model": "kokoro",
     "rtf_median": 0.095,

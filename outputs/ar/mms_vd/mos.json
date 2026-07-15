@@ -1,0 +1,68 @@
+{
+  "outdir": "../outputs/ar/mms_vd",
+  "mean_distill_mos": 4.442,
+  "mean_utmos": 3.371,
+  "n": 12,
+  "utterances": [
+    {
+      "distill_mos": 4.48,
+      "utmos": 3.579,
+      "id": "ar_01"
+    },
+    {
+      "distill_mos": 4.382,
+      "utmos": 3.157,
+      "id": "ar_02"
+    },
+    {
+      "distill_mos": 4.405,
+      "utmos": 3.515,
+      "id": "ar_03"
+    },
+    {
+      "distill_mos": 4.439,
+      "utmos": 3.336,
+      "id": "ar_04"
+    },
+    {
+      "distill_mos": 4.574,
+      "utmos": 3.126,
+      "id": "ar_05"
+    },
+    {
+      "distill_mos": 4.227,
+      "utmos": 3.604,
+      "id": "ar_06"
+    },
+    {
+      "distill_mos": 4.495,
+      "utmos": 3.231,
+      "id": "ar_07"
+    },
+    {
+      "distill_mos": 4.223,
+      "utmos": 3.469,
+      "id": "ar_08"
+    },
+    {
+      "distill_mos": 4.462,
+      "utmos": 3.37,
+      "id": "ar_09"
+    },
+    {
+      "distill_mos": 4.585,
+      "utmos": 3.647,
+      "id": "ar_10"
+    },
+    {
+      "distill_mos": 4.492,
+      "utmos": 3.007,
+      "id": "ar_11"
+    },
+    {
+      "distill_mos": 4.542,
+      "utmos": 3.415,
+      "id": "ar_12"
+    }
+  ]
+}
