@@ -28,6 +28,7 @@ from pathlib import Path
 
 SEED = 20260715
 UTT_IDS = ["01", "02", "05", "08", "12"]  # fixed subset: latency/short/names/emotion/neutral
+SKIP = {"ar/mms"}  # superseded by ar/mms_vd (digit-verbalization fix); keep raters focused
 REPO = Path(__file__).resolve().parents[2]
 OUT = REPO / "outputs"
 REFS = REPO / "references"
@@ -73,6 +74,8 @@ def collect_systems():
         if not lang_dir.is_dir() or lang_dir.name.startswith("_"):
             continue
         for model_dir in sorted(lang_dir.glob("*")):
+            if f"{lang_dir.name}/{model_dir.name}" in SKIP:
+                continue
             if (model_dir / "timings.json").exists():
                 systems.setdefault(lang_dir.name, []).append(model_dir)
     return systems
