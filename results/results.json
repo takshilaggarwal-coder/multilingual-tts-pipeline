@@ -1,0 +1,32 @@
+[
+  {
+    "lang": "ar",
+    "model": "mms",
+    "rtf_median": 0.222,
+    "latency_full_s": 1.2222,
+    "first_chunk_s": 1.222,
+    "cold_load_s": 10.376,
+    "engine": "MMS-TTS (ar)"
+  },
+  {
+    "lang": "en",
+    "model": "kokoro",
+    "rtf_median": 0.095,
+    "latency_full_s": 0.2875,
+    "first_chunk_s": 0.2787,
+    "cold_load_s": 0.511,
+    "engine": "Kokoro-82M (af_heart)",
+    "wer": 0.0132,
+    "distill_mos": 4.63,
+    "utmos": 4.512
+  },
+  {
+    "lang": "hi",
+    "model": "kokoro",
+    "rtf_median": 0.092,
+    "latency_full_s": 0.4845,
+    "first_chunk_s": 0.4646,
+    "cold_load_s": 0.333,
+    "engine": "Kokoro-82M (hf_alpha)"
+  }
+]
