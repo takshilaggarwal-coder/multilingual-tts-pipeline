@@ -1,0 +1,68 @@
+{
+  "outdir": "../outputs/hi/chatterbox",
+  "mean_distill_mos": 4.567,
+  "mean_utmos": 3.734,
+  "n": 12,
+  "utterances": [
+    {
+      "distill_mos": 4.533,
+      "utmos": 3.692,
+      "id": "hi_01"
+    },
+    {
+      "distill_mos": 4.475,
+      "utmos": 3.385,
+      "id": "hi_02"
+    },
+    {
+      "distill_mos": 4.534,
+      "utmos": 3.943,
+      "id": "hi_03"
+    },
+    {
+      "distill_mos": 4.567,
+      "utmos": 3.965,
+      "id": "hi_04"
+    },
+    {
+      "distill_mos": 4.687,
+      "utmos": 3.786,
+      "id": "hi_05"
+    },
+    {
+      "distill_mos": 4.153,
+      "utmos": 3.875,
+      "id": "hi_06"
+    },
+    {
+      "distill_mos": 4.649,
+      "utmos": 3.122,
+      "id": "hi_07"
+    },
+    {
+      "distill_mos": 4.621,
+      "utmos": 3.513,
+      "id": "hi_08"
+    },
+    {
+      "distill_mos": 4.704,
+      "utmos": 3.81,
+      "id": "hi_09"
+    },
+    {
+      "distill_mos": 4.47,
+      "utmos": 3.892,
+      "id": "hi_10"
+    },
+    {
+      "distill_mos": 4.734,
+      "utmos": 3.95,
+      "id": "hi_11"
+    },
+    {
+      "distill_mos": 4.675,
+      "utmos": 3.877,
+      "id": "hi_12"
+    }
+  ]
+}

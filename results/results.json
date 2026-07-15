@@ -1,6 +1,21 @@
 [
   {
     "lang": "ar",
+    "model": "chatterbox",
+    "rtf_median": 1.061,
+    "latency_full_s": 5.6268,
+    "first_chunk_s": 1.8144,
+    "cold_load_s": 4.548,
+    "engine": "Chatterbox-ML 4bit (ar)",
+    "wer": 0.1342,
+    "distill_mos": 4.575,
+    "utmos": 3.146,
+    "speaker_cosine": 0.7429,
+    "sim_ceiling": 0.8509,
+    "sim_floor": 0.0642
+  },
+  {
+    "lang": "ar",
     "model": "mms",
     "rtf_median": 0.222,
     "latency_full_s": 1.2222,
@@ -25,6 +40,21 @@
   },
   {
     "lang": "en",
+    "model": "chatterbox",
+    "rtf_median": 1.071,
+    "latency_full_s": 4.0603,
+    "first_chunk_s": 1.014,
+    "cold_load_s": 4.524,
+    "engine": "Chatterbox-ML 4bit (en)",
+    "wer": 0.1118,
+    "distill_mos": 4.632,
+    "utmos": 4.28,
+    "speaker_cosine": 0.7251,
+    "sim_ceiling": 0.8185,
+    "sim_floor": 0.0357
+  },
+  {
+    "lang": "en",
     "model": "kokoro",
     "rtf_median": 0.095,
     "latency_full_s": 0.2875,
@@ -34,6 +64,21 @@
     "wer": 0.0132,
     "distill_mos": 4.63,
     "utmos": 4.512
+  },
+  {
+    "lang": "hi",
+    "model": "chatterbox",
+    "rtf_median": 1.069,
+    "latency_full_s": 4.9824,
+    "first_chunk_s": 1.5164,
+    "cold_load_s": 4.338,
+    "engine": "Chatterbox-ML 4bit (hi)",
+    "wer": 0.2278,
+    "distill_mos": 4.567,
+    "utmos": 3.734,
+    "speaker_cosine": 0.87,
+    "sim_ceiling": 0.9047,
+    "sim_floor": 0.0253
   },
   {
     "lang": "hi",

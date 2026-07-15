@@ -1,0 +1,59 @@
+{
+  "reference": "../references/en/en_ref_main.wav",
+  "embedding": "speechbrain/spkrec-ecapa-voxceleb",
+  "mean_cosine": 0.7251,
+  "min_cosine": 0.6018,
+  "n": 12,
+  "utterances": [
+    {
+      "id": "en_01",
+      "cosine": 0.7203
+    },
+    {
+      "id": "en_02",
+      "cosine": 0.6018
+    },
+    {
+      "id": "en_03",
+      "cosine": 0.6623
+    },
+    {
+      "id": "en_04",
+      "cosine": 0.782
+    },
+    {
+      "id": "en_05",
+      "cosine": 0.7173
+    },
+    {
+      "id": "en_06",
+      "cosine": 0.7136
+    },
+    {
+      "id": "en_07",
+      "cosine": 0.7477
+    },
+    {
+      "id": "en_08",
+      "cosine": 0.7468
+    },
+    {
+      "id": "en_09",
+      "cosine": 0.7342
+    },
+    {
+      "id": "en_10",
+      "cosine": 0.7332
+    },
+    {
+      "id": "en_11",
+      "cosine": 0.8091
+    },
+    {
+      "id": "en_12",
+      "cosine": 0.7329
+    }
+  ],
+  "real_vs_real": 0.8185,
+  "real_vs_other": 0.0357
+}
