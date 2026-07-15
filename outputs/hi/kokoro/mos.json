@@ -1,0 +1,68 @@
+{
+  "outdir": "../outputs/hi/kokoro",
+  "mean_distill_mos": 4.638,
+  "mean_utmos": 4.26,
+  "n": 12,
+  "utterances": [
+    {
+      "distill_mos": 4.582,
+      "utmos": 4.151,
+      "id": "hi_01"
+    },
+    {
+      "distill_mos": 4.66,
+      "utmos": 4.365,
+      "id": "hi_02"
+    },
+    {
+      "distill_mos": 4.653,
+      "utmos": 4.359,
+      "id": "hi_03"
+    },
+    {
+      "distill_mos": 4.639,
+      "utmos": 4.269,
+      "id": "hi_04"
+    },
+    {
+      "distill_mos": 4.724,
+      "utmos": 4.302,
+      "id": "hi_05"
+    },
+    {
+      "distill_mos": 4.291,
+      "utmos": 4.282,
+      "id": "hi_06"
+    },
+    {
+      "distill_mos": 4.691,
+      "utmos": 4.168,
+      "id": "hi_07"
+    },
+    {
+      "distill_mos": 4.662,
+      "utmos": 4.379,
+      "id": "hi_08"
+    },
+    {
+      "distill_mos": 4.734,
+      "utmos": 4.047,
+      "id": "hi_09"
+    },
+    {
+      "distill_mos": 4.687,
+      "utmos": 4.22,
+      "id": "hi_10"
+    },
+    {
+      "distill_mos": 4.585,
+      "utmos": 4.207,
+      "id": "hi_11"
+    },
+    {
+      "distill_mos": 4.743,
+      "utmos": 4.372,
+      "id": "hi_12"
+    }
+  ]
+}

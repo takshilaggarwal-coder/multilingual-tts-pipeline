@@ -6,7 +6,10 @@
     "latency_full_s": 1.2222,
     "first_chunk_s": 1.222,
     "cold_load_s": 10.376,
-    "engine": "MMS-TTS (ar)"
+    "engine": "MMS-TTS (ar)",
+    "wer": 0.302,
+    "distill_mos": 4.447,
+    "utmos": 3.272
   },
   {
     "lang": "en",
@@ -27,6 +30,9 @@
     "latency_full_s": 0.4845,
     "first_chunk_s": 0.4646,
     "cold_load_s": 0.333,
-    "engine": "Kokoro-82M (hf_alpha)"
+    "engine": "Kokoro-82M (hf_alpha)",
+    "wer": 0.1108,
+    "distill_mos": 4.638,
+    "utmos": 4.26
   }
 ]
