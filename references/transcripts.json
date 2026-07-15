@@ -1,0 +1,20 @@
+{
+  "en": {
+    "ref_audio": "references/en/en_ref_main.wav",
+    "ref_text": "so was i standing and she said if thou in hearing suffers pain lift up thy beard and thou shalt feel a greater pain in seeing",
+    "sr": 24000,
+    "duration_s": 10.04
+  },
+  "ar": {
+    "ref_audio": "references/ar/ar_ref_10s.wav",
+    "ref_text": "شارك موقع الجزيرة لتعلم العربية في المؤتمر الدولي الثاني للغة العربية",
+    "sr": 48000,
+    "duration_s": 10.55
+  },
+  "hi": {
+    "ref_audio": "references/hi/hi_ref_10s.wav",
+    "ref_text": "अक्सर हम सांप, मैंडक, छिपकली, चमगादर तथा उल्लू इत्यादी को निर्देहता से मार डालते हैं और पारितंत्र में उनके महत्व के विशय में",
+    "sr": 44100,
+    "duration_s": 11.4
+  }
+}
