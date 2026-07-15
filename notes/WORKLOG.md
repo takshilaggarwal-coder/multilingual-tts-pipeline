@@ -55,6 +55,29 @@ Honest running log of what was actually done, including dead ends. Newest at the
   pass everywhere. Next phases need human input: reference voice for cloning (own vs
   openly-licensed) → speaker-similarity + cloning models (Chatterbox/Habibi/IndicF5);
   and the human-MOS listener panel (esp. native Arabic). Checked in with the user here.
+
+### Completion (2026-07-15)
+
+- **Cloning tier (Chatterbox-ML 4bit MLX, all 3 langs):** one 607 MB Apache/MIT checkpoint,
+  unwatermarked on the MLX path (verified: no `perth`, no watermark code). Warm RTF ~1.07,
+  full clip 4–5.6 s, first chunk 1–1.8 s, peak ~2 GB. Speaker cosine (ECAPA, calibrated):
+  EN 0.725 (0.88 of ceiling), AR 0.743 (0.86), HI 0.870 (0.96) — all clearly same-speaker.
+  WER EN 11.2 / AR 13.4 / HI 22.8 % (cloning trades intelligibility for identity).
+- **Arabic specialist (Habibi-TTS MSA, F5v1, Apache-2.0):** WER **9.4 %** (only AR system under
+  10 %), cosine 0.779 (0.91 of ceiling), predicted MOS at real-speech level — but RTF ~5,
+  36 s clips → strictly offline on M2 MPS. The Arabic quality winner; Chatterbox is the
+  practical real-time-ish cloning pick; MMS the fast robotic floor.
+- **Real-speech MOS anchors** (`results/mos_anchors.json`): AR real speech UTMOS 3.02 — every
+  Arabic TTS lands at/above it, so low absolute UTMOS = predictor's English bias, not the audio.
+- **Deliverables done:** README.md, SUBMISSION.md (per-language calls + failure modes + anchors),
+  notes/LIMITATIONS_AND_DISCLOSURE.md (license table + ECAPA interpretation + roadmap),
+  results/results.md, blinded listening kit (eval/listening_test/kit, key held back),
+  make_submission.sh → ../infinia_voice_submission.zip (55 MB, verified no venv/cache/key leak).
+- **One human-in-the-loop item remains, by nature:** run the listening panel (≥3 native/fluent
+  listeners per language) with the prepared kit, then `score_kit.py` → human MOS. Predicted MOS
+  stands in as a labeled proxy until then. Everything else is real, measured, and reproducible.
+- Bug caught + fixed by the adversarial research pass: the PerTh-watermark disclosure was wrong
+  for the MLX path (outputs are unwatermarked) — corrected in README + pipeline + disclosure doc.
 - **Arabic MMS round-trip WER: 30.2 % — fails the 10 % bar, and the transcripts show why.**
   Digit rows are deletion-dominated: ar_04's verbalized "1249" and ar_11's "542"/"12" are
   simply never spoken. MMS-tts-ara's char-level VITS tokenizer silently drops Arabic-numeral
