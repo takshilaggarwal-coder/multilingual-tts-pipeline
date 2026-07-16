@@ -117,6 +117,38 @@ cloning* (Habibi) **or** *fast + cloning* (Chatterbox), not both at once on an 8
 - **Speaker similarity** — SpeechBrain ECAPA cosine with ceiling/floor calibration (above).
 - **Latency / RTF** — warm, in-pipeline `TimingRecorder`, first row re-run to drop compilation.
 
+## Bonus metrics (added — the ones that changed how I read the results)
+
+Full table: `results/extra_metrics.md` (regenerate with `eval/extra_metrics.py`). Computed
+from the audio + existing WER, so cheap to re-run.
+
+| System | Hard-token WER | Expressiveness (emo/neutral F0) | Mean F0 std |
+|---|---|---|---|
+| en/kokoro | **0.049** | 1.17 | 38.6 |
+| en/chatterbox | 0.244 | 1.43 | 37.9 |
+| hi/kokoro | 0.155 | 1.14 | 40.9 |
+| hi/chatterbox | 0.392 | 1.05 | 30.4 |
+| ar/mms_vd | 0.396 | 0.94 | 34.0 |
+| ar/chatterbox | 0.264 | 0.62 | 27.9 |
+| ar/habibi | 0.245 | **1.31** | 42.5 |
+
+- **Hard-token WER** (WER on the names/numbers/currency/digits/acronym rows only) is the
+  metric I trust most for a real voice agent, and it is **3–5× the corpus WER** for every
+  system — a model can ace overall intelligibility and still misread an account number or a
+  name. Kokoro English is the only system that stays comfortably safe here (4.9 %); everything
+  else needs the text-normalization frontend from the roadmap before it touches live numbers.
+- **Expressiveness** (pitch spread on the emotion row ÷ the neutral row) separates models that
+  MOS and WER rate as tied: the MMS floor barely modulates (0.72–0.94, i.e. it reads an
+  exclamation like a ledger), while Habibi (1.31) and Chatterbox-EN (1.43) genuinely lift pitch
+  for affect. Chatterbox on Arabic actually *flattens* on the emotion row (0.62) — a concrete
+  weakness the human panel should confirm.
+- **Audio hygiene** (clipping / edge-silence): clean across the board (max clipped ≈ 0), so no
+  system is winning or losing on artefacts — the differences above are real, not glitches.
+
+Other metrics worth adding with more time (noted, not run): GPU/energy cost per second of
+audio, long-form prosody drift on paragraph-length input, and code-switch pronunciation
+accuracy scored by a bilingual rater.
+
 ## Where it breaks (honest failure modes)
 
 - **Hindi WER is ASR-confounded.** faster-whisper large-v3 gives Hindi 11.1 %; the Hindi-tuned
