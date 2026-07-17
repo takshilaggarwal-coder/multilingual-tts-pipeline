@@ -92,3 +92,28 @@ Running log of what I actually did, including the dead ends. Newest at the botto
   ECAPA cache leaking into the first build — the savedir was CWD-relative, so it had
   landed inside `eval/`. Anchored it to the repo root and hardened the zip excludes;
   rebuilt clean (263 files, kit in, key out, no venvs/caches).
+
+## 2026-07-18 — own voice as the cloning reference
+
+- Recorded myself for the English and Hindi references (two takes each, phone mic, quiet
+  room; converted with `afconvert`, peak-normalized). Kept the Arabic Speech Corpus
+  narrator for Arabic. Verified the takes by transcribing the 10 s cuts — transcripts
+  match the scripts I read.
+- Re-ran the Chatterbox cloning benchmark against my voice. Timings unchanged (RTF ~1.1).
+  Quality is the interesting part:
+  - **Hindi: cosine 0.78** (ceiling 0.92, floor 0.15 → 0.81 normalized) — still clearly
+    same-speaker, and cloned-output WER actually improved to 16.1 %.
+  - **English: cosine 0.48** (ceiling 0.83 → 0.55 normalized) — a real regression vs. the
+    0.73 the studio LibriTTS reference got. Same pipeline, same model; the only change is
+    the reference. Zero-shot cloning is very sensitive to reference channel quality (and
+    possibly accent match) — which is exactly what production callers' audio looks like,
+    so this goes in the write-up as a first-class finding, not a footnote.
+  - Tried a second take as the conditioning reference to check whether it's the specific
+    cut or the recording in general: cosine 0.473 vs 0.480 — identical. The weakness is
+    robust across takes (channel/accent, not the cut). Variant run kept in
+    `outputs/_en_ref2_variant/` as evidence. Practical mitigations for production:
+    cleaner reference capture flow, reference denoising/enhancement before conditioning,
+    or fine-tuning toward the target speaker.
+- The predicted-MOS anchor story sharpened: my *real* phone-mic voice scores UTMOS 2.4 (en)
+  / 2.6 (hi) — lower than the clones of me. These predictors reward channel cleanliness,
+  not just naturalness. Human panel remains the graded metric.

@@ -1,67 +1,67 @@
 {
   "outdir": "../outputs/hi/chatterbox",
-  "mean_distill_mos": 4.567,
-  "mean_utmos": 3.734,
+  "mean_distill_mos": 4.006,
+  "mean_utmos": 3.166,
   "n": 12,
   "utterances": [
     {
-      "distill_mos": 4.533,
-      "utmos": 3.692,
+      "distill_mos": 3.83,
+      "utmos": 3.152,
       "id": "hi_01"
     },
     {
-      "distill_mos": 4.475,
-      "utmos": 3.385,
+      "distill_mos": 3.737,
+      "utmos": 3.262,
       "id": "hi_02"
     },
     {
-      "distill_mos": 4.534,
-      "utmos": 3.943,
+      "distill_mos": 4.056,
+      "utmos": 3.152,
       "id": "hi_03"
     },
     {
-      "distill_mos": 4.567,
-      "utmos": 3.965,
+      "distill_mos": 4.131,
+      "utmos": 3.182,
       "id": "hi_04"
     },
     {
-      "distill_mos": 4.687,
-      "utmos": 3.786,
+      "distill_mos": 4.15,
+      "utmos": 2.984,
       "id": "hi_05"
     },
     {
-      "distill_mos": 4.153,
-      "utmos": 3.875,
+      "distill_mos": 3.569,
+      "utmos": 3.452,
       "id": "hi_06"
     },
     {
-      "distill_mos": 4.649,
-      "utmos": 3.122,
+      "distill_mos": 4.243,
+      "utmos": 2.787,
       "id": "hi_07"
     },
     {
-      "distill_mos": 4.621,
-      "utmos": 3.513,
+      "distill_mos": 3.938,
+      "utmos": 3.163,
       "id": "hi_08"
     },
     {
-      "distill_mos": 4.704,
-      "utmos": 3.81,
+      "distill_mos": 3.874,
+      "utmos": 2.99,
       "id": "hi_09"
     },
     {
-      "distill_mos": 4.47,
-      "utmos": 3.892,
+      "distill_mos": 3.909,
+      "utmos": 3.546,
       "id": "hi_10"
     },
     {
-      "distill_mos": 4.734,
-      "utmos": 3.95,
+      "distill_mos": 4.27,
+      "utmos": 3.445,
       "id": "hi_11"
     },
     {
-      "distill_mos": 4.675,
-      "utmos": 3.877,
+      "distill_mos": 4.365,
+      "utmos": 2.873,
       "id": "hi_12"
     }
   ]

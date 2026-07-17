@@ -12,7 +12,7 @@
     "utmos": 3.146,
     "speaker_cosine": 0.7429,
     "sim_ceiling": 0.8509,
-    "sim_floor": 0.0642
+    "sim_floor": 0.0636
   },
   {
     "lang": "ar",
@@ -27,7 +27,7 @@
     "utmos": 2.933,
     "speaker_cosine": 0.7794,
     "sim_ceiling": 0.8509,
-    "sim_floor": 0.0642
+    "sim_floor": 0.0636
   },
   {
     "lang": "ar",
@@ -56,17 +56,17 @@
   {
     "lang": "en",
     "model": "chatterbox",
-    "rtf_median": 1.071,
-    "latency_full_s": 4.0603,
-    "first_chunk_s": 1.014,
-    "cold_load_s": 4.524,
+    "rtf_median": 1.133,
+    "latency_full_s": 3.8716,
+    "first_chunk_s": 0.9495,
+    "cold_load_s": 7.784,
     "engine": "Chatterbox-ML 4bit (en)",
-    "wer": 0.1118,
-    "distill_mos": 4.632,
-    "utmos": 4.28,
-    "speaker_cosine": 0.7251,
-    "sim_ceiling": 0.8185,
-    "sim_floor": 0.0357
+    "wer": 0.1711,
+    "distill_mos": 3.96,
+    "utmos": 3.545,
+    "speaker_cosine": 0.4796,
+    "sim_ceiling": 0.8333,
+    "sim_floor": 0.0451
   },
   {
     "lang": "en",
@@ -83,17 +83,17 @@
   {
     "lang": "hi",
     "model": "chatterbox",
-    "rtf_median": 1.069,
-    "latency_full_s": 4.9824,
-    "first_chunk_s": 1.5164,
-    "cold_load_s": 4.338,
+    "rtf_median": 1.095,
+    "latency_full_s": 5.1656,
+    "first_chunk_s": 1.4758,
+    "cold_load_s": 4.665,
     "engine": "Chatterbox-ML 4bit (hi)",
-    "wer": 0.2278,
-    "distill_mos": 4.567,
-    "utmos": 3.734,
-    "speaker_cosine": 0.87,
-    "sim_ceiling": 0.9047,
-    "sim_floor": 0.0253
+    "wer": 0.1614,
+    "distill_mos": 4.006,
+    "utmos": 3.166,
+    "speaker_cosine": 0.7785,
+    "sim_ceiling": 0.9227,
+    "sim_floor": 0.1546
   },
   {
     "lang": "hi",

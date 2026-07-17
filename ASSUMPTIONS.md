@@ -8,13 +8,13 @@ The brief says: if something is ambiguous, make a call and state it. These are t
    precision, large diffusion TTS) are not benchmarkable here; where a model is widely considered
    SOTA but couldn't run on this machine, that is stated rather than guessed at.
 2. **Track A** (code repo), which also carries Track B's audio clips and a written comparison.
-3. **Reference voice for cloning.** Openly licensed speech samples (per the brief's explicit
-   allowance), one reference speaker per language: LibriTTS-R spk 84 (EN), Arabic Speech
-   Corpus's professional MSA narrator (AR), SYSPIN Hindi female voice artist (HI) — all
-   CC BY 4.0, all recorded expressly for speech-synthesis research. Provenance, verification
-   URLs, and attribution in `references/LICENSES.md`. No real person cloned without consent.
-   The candidate's own voice can be swapped in later by replacing `references/<lang>/*_main.wav`
-   and re-running `eval/make_ref_cuts.py` + the cloning pipelines.
+3. **Reference voice for cloning.** English and Hindi clone **my own voice** (recorded for
+   this task, 2026-07-18 — consent is mine to give). Arabic uses an openly licensed sample
+   per the brief's explicit allowance: the Arabic Speech Corpus's professional MSA narrator
+   (CC BY 4.0, recorded for speech-synthesis research). Provenance, verification URLs, and
+   attribution in `references/LICENSES.md`. No real person cloned without consent. An earlier
+   iteration used CC BY 4.0 corpus voices for EN/HI too (LibriTTS-R spk 84, SYSPIN); those
+   numbers are preserved in git history.
 4. **MOS.** Human MOS comes from a small real listener panel (candidate + recruited listeners,
    native/fluent per language) using the blinded, randomized listening kit in
    `eval/listening_test/` — the kit is generated and ready to send; panel collection is the

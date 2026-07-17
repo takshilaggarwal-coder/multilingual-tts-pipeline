@@ -4,10 +4,10 @@
   "device": "mlx-metal",
   "config": {
     "lang_code": "en",
-    "ref_audio": "references/en/en_ref_10s.wav",
+    "ref_audio": "references/en/en_ref_02.wav",
     "quant": "4bit"
   },
-  "cold_load_s": 7.784,
+  "cold_load_s": 4.333,
   "machine": {
     "chip": "Apple M2",
     "platform": "macOS-26.2-arm64-arm-64bit",
@@ -17,98 +17,98 @@
     {
       "id": "en_02",
       "text": "Welcome to customer support, how can I help you today?",
-      "gen_time_s": 4.3505,
-      "audio_len_s": 3.36,
-      "rtf": 1.2948,
-      "first_chunk_s": 1.1764
+      "gen_time_s": 4.0711,
+      "audio_len_s": 3.4,
+      "rtf": 1.1974,
+      "first_chunk_s": 1.153
     },
     {
       "id": "en_03",
       "text": "Your appointment is on March 23rd at 3:45 PM.",
-      "gen_time_s": 4.7645,
-      "audio_len_s": 3.84,
-      "rtf": 1.2408,
-      "first_chunk_s": 1.4423
+      "gen_time_s": 4.9204,
+      "audio_len_s": 4.8,
+      "rtf": 1.0251,
+      "first_chunk_s": 1.3893
     },
     {
       "id": "en_04",
       "text": "The total comes to $1,249.99, including shipping and taxes.",
-      "gen_time_s": 5.9745,
-      "audio_len_s": 5.8,
-      "rtf": 1.0301,
-      "first_chunk_s": 1.7222
+      "gen_time_s": 7.109,
+      "audio_len_s": 7.8,
+      "rtf": 0.9114,
+      "first_chunk_s": 2.1266
     },
     {
       "id": "en_05",
       "text": "Dr. Priya Krishnamurthy will meet Mr. O'Connell at the Nairobi conference.",
-      "gen_time_s": 5.6315,
-      "audio_len_s": 5.44,
-      "rtf": 1.0352,
-      "first_chunk_s": 1.6124
+      "gen_time_s": 5.2789,
+      "audio_len_s": 5.28,
+      "rtf": 0.9998,
+      "first_chunk_s": 1.6046
     },
     {
       "id": "en_06",
       "text": "Would you prefer the morning flight or the evening one?",
-      "gen_time_s": 3.9854,
-      "audio_len_s": 3.0,
-      "rtf": 1.3285,
-      "first_chunk_s": 1.0876
+      "gen_time_s": 3.9943,
+      "audio_len_s": 3.32,
+      "rtf": 1.2031,
+      "first_chunk_s": 1.0859
     },
     {
       "id": "en_07",
       "text": "Although the weather forecast predicted heavy rain across the coastal regions, thousands of runners still gathered at dawn for the annual marathon, cheering as the first group crossed the starting line.",
-      "gen_time_s": 9.0013,
-      "audio_len_s": 9.6,
-      "rtf": 0.9376,
-      "first_chunk_s": 2.8205
+      "gen_time_s": 9.5038,
+      "audio_len_s": 10.68,
+      "rtf": 0.8899,
+      "first_chunk_s": 3.2919
     },
     {
       "id": "en_08",
       "text": "I can't believe we actually won the championship — this is incredible!",
-      "gen_time_s": 5.5292,
-      "audio_len_s": 3.8,
-      "rtf": 1.455,
-      "first_chunk_s": 2.3957
+      "gen_time_s": 4.0638,
+      "audio_len_s": 3.36,
+      "rtf": 1.2095,
+      "first_chunk_s": 1.1638
     },
     {
       "id": "en_09",
       "text": "Please restart the router, wait thirty seconds, and then reconnect to the network.",
-      "gen_time_s": 5.2417,
-      "audio_len_s": 4.64,
-      "rtf": 1.1297,
-      "first_chunk_s": 1.3866
+      "gen_time_s": 5.7544,
+      "audio_len_s": 5.48,
+      "rtf": 1.0501,
+      "first_chunk_s": 1.5827
     },
     {
       "id": "en_10",
       "text": "She sells seashells by the seashore, and the shells she sells are surely seashells.",
-      "gen_time_s": 5.6127,
-      "audio_len_s": 5.2,
-      "rtf": 1.0794,
-      "first_chunk_s": 1.6653
+      "gen_time_s": 5.9137,
+      "audio_len_s": 5.72,
+      "rtf": 1.0339,
+      "first_chunk_s": 1.693
     },
     {
       "id": "en_11",
       "text": "The NASA and ISRO satellite NISAR launched in July 2025.",
-      "gen_time_s": 5.2695,
-      "audio_len_s": 4.64,
-      "rtf": 1.1357,
-      "first_chunk_s": 1.4422
+      "gen_time_s": 5.6354,
+      "audio_len_s": 5.16,
+      "rtf": 1.0921,
+      "first_chunk_s": 1.555
     },
     {
       "id": "en_12",
       "text": "The library closes at nine on weekdays and six on weekends.",
-      "gen_time_s": 4.6118,
-      "audio_len_s": 4.32,
-      "rtf": 1.0676,
-      "first_chunk_s": 1.3119
+      "gen_time_s": 4.4312,
+      "audio_len_s": 3.64,
+      "rtf": 1.2174,
+      "first_chunk_s": 1.2504
     },
     {
       "id": "en_01",
       "text": "Please call me back when you get a chance today.",
-      "gen_time_s": 3.8716,
-      "audio_len_s": 2.96,
-      "rtf": 1.308,
-      "first_chunk_s": 0.9495
+      "gen_time_s": 4.0205,
+      "audio_len_s": 3.2,
+      "rtf": 1.2564,
+      "first_chunk_s": 1.0367
     }
   ]
 }

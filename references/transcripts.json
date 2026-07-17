@@ -1,9 +1,9 @@
 {
   "en": {
-    "ref_audio": "references/en/en_ref_main.wav",
-    "ref_text": "so was i standing and she said if thou in hearing suffers pain lift up thy beard and thou shalt feel a greater pain in seeing",
+    "ref_audio": "references/en/en_ref_10s.wav",
+    "ref_text": "I moved to Bangalore about 3 years ago and the first thing I noticed was how quickly the weather changes in the evenings. Most mornings I take the same route to the work.",
     "sr": 24000,
-    "duration_s": 10.04
+    "duration_s": 10.5
   },
   "ar": {
     "ref_audio": "references/ar/ar_ref_10s.wav",
@@ -13,8 +13,8 @@
   },
   "hi": {
     "ref_audio": "references/hi/hi_ref_10s.wav",
-    "ref_text": "अक्सर हम सांप, मैंडक, छिपकली, चमगादर तथा उल्लू इत्यादी को निर्देहता से मार डालते हैं और पारितंत्र में उनके महत्व के विशय में",
-    "sr": 44100,
-    "duration_s": 11.4
+    "ref_text": "मैं करीब तीन साल पहले बैंगलार आया था और सबसे पहले मुझे यहाँ की शामे पसंद आई हर सुबे मैं आफिस जाता समय",
+    "sr": 24000,
+    "duration_s": 9.65
   }
 }

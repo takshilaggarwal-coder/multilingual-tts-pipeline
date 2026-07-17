@@ -7,7 +7,7 @@
     "ref_audio": "references/hi/hi_ref_10s.wav",
     "quant": "4bit"
   },
-  "cold_load_s": 4.338,
+  "cold_load_s": 4.665,
   "machine": {
     "chip": "Apple M2",
     "platform": "macOS-26.2-arm64-arm-64bit",
@@ -17,98 +17,98 @@
     {
       "id": "hi_02",
       "text": "नमस्ते, ग्राहक सेवा में आपका स्वागत है, मैं आपकी क्या मदद कर सकती हूँ?",
-      "gen_time_s": 5.7219,
-      "audio_len_s": 5.28,
-      "rtf": 1.0837,
-      "first_chunk_s": 1.7199
+      "gen_time_s": 5.6279,
+      "audio_len_s": 5.2,
+      "rtf": 1.0823,
+      "first_chunk_s": 1.7327
     },
     {
       "id": "hi_03",
       "text": "आपकी नियुक्ति तेईस मार्च को दोपहर साढ़े तीन बजे तय हुई है।",
-      "gen_time_s": 5.2267,
-      "audio_len_s": 4.8,
-      "rtf": 1.0889,
-      "first_chunk_s": 1.6024
+      "gen_time_s": 5.6046,
+      "audio_len_s": 5.04,
+      "rtf": 1.112,
+      "first_chunk_s": 1.5899
     },
     {
       "id": "hi_04",
       "text": "कुल राशि 1249 रुपये है, जिसमें टैक्स और डिलीवरी शामिल है।",
-      "gen_time_s": 6.2424,
-      "audio_len_s": 6.04,
-      "rtf": 1.0335,
-      "first_chunk_s": 1.8955
+      "gen_time_s": 5.899,
+      "audio_len_s": 5.68,
+      "rtf": 1.0386,
+      "first_chunk_s": 1.8737
     },
     {
       "id": "hi_05",
       "text": "डॉ. प्रिया कृष्णमूर्ति कल मुंबई सम्मेलन में श्री रॉबर्ट विल्सन से मिलेंगी।",
-      "gen_time_s": 6.1757,
-      "audio_len_s": 5.88,
-      "rtf": 1.0503,
-      "first_chunk_s": 1.9095
+      "gen_time_s": 5.274,
+      "audio_len_s": 4.68,
+      "rtf": 1.1269,
+      "first_chunk_s": 1.5408
     },
     {
       "id": "hi_06",
       "text": "क्या आप सुबह की उड़ान पसंद करेंगे या शाम की?",
-      "gen_time_s": 4.442,
-      "audio_len_s": 3.52,
-      "rtf": 1.2619,
-      "first_chunk_s": 1.3024
+      "gen_time_s": 4.5527,
+      "audio_len_s": 3.76,
+      "rtf": 1.2108,
+      "first_chunk_s": 1.3836
     },
     {
       "id": "hi_07",
       "text": "हालाँकि मौसम विभाग ने तटीय इलाक़ों में भारी बारिश की चेतावनी दी थी, फिर भी हज़ारों धावक भोर होते ही वार्षिक मैराथन के लिए जमा हो गए और दौड़ शुरू होते ही तालियाँ गूंज उठीं।",
-      "gen_time_s": 13.0195,
-      "audio_len_s": 13.96,
-      "rtf": 0.9326,
-      "first_chunk_s": 4.5875
+      "gen_time_s": 9.7395,
+      "audio_len_s": 10.72,
+      "rtf": 0.9085,
+      "first_chunk_s": 3.3647
     },
     {
       "id": "hi_08",
       "text": "मुझे यक़ीन नहीं हो रहा कि हम चैंपियनशिप जीत गए — यह तो कमाल हो गया!",
-      "gen_time_s": 7.2816,
-      "audio_len_s": 6.04,
-      "rtf": 1.2056,
-      "first_chunk_s": 2.9328
+      "gen_time_s": 5.5484,
+      "audio_len_s": 5.6,
+      "rtf": 0.9908,
+      "first_chunk_s": 1.8663
     },
     {
       "id": "hi_09",
       "text": "कृपया राउटर को दोबारा चालू करें, तीस सेकंड प्रतीक्षा करें और फिर नेटवर्क से जोड़ें।",
-      "gen_time_s": 6.8098,
-      "audio_len_s": 6.68,
-      "rtf": 1.0194,
-      "first_chunk_s": 2.1201
+      "gen_time_s": 5.8476,
+      "audio_len_s": 6.04,
+      "rtf": 0.9681,
+      "first_chunk_s": 1.7241
     },
     {
       "id": "hi_10",
       "text": "मैंने कल नया smartphone ख़रीदा और उसका camera सच में बहुत अच्छा है।",
-      "gen_time_s": 5.486,
-      "audio_len_s": 5.2,
-      "rtf": 1.055,
-      "first_chunk_s": 1.7
+      "gen_time_s": 5.1846,
+      "audio_len_s": 4.68,
+      "rtf": 1.1078,
+      "first_chunk_s": 1.4772
     },
     {
       "id": "hi_11",
       "text": "ट्रेन संख्या 12951 मुंबई सेंट्रल से शाम 5 बजकर 40 मिनट पर रवाना होती है।",
-      "gen_time_s": 7.2283,
-      "audio_len_s": 7.28,
-      "rtf": 0.9929,
-      "first_chunk_s": 2.1535
+      "gen_time_s": 6.5584,
+      "audio_len_s": 6.84,
+      "rtf": 0.9588,
+      "first_chunk_s": 2.1558
     },
     {
       "id": "hi_12",
       "text": "पुस्तकालय सप्ताह के दिनों में रात नौ बजे और सप्ताहांत में शाम छह बजे बंद होता है।",
-      "gen_time_s": 8.0376,
-      "audio_len_s": 6.72,
-      "rtf": 1.1961,
-      "first_chunk_s": 3.3714
+      "gen_time_s": 7.3096,
+      "audio_len_s": 5.52,
+      "rtf": 1.3242,
+      "first_chunk_s": 3.2218
     },
     {
       "id": "hi_01",
       "text": "कृपया कल सुबह दफ़्तर पहुँचते ही मुझे फ़ोन ज़रूर कीजिए।",
-      "gen_time_s": 4.9824,
-      "audio_len_s": 4.36,
+      "gen_time_s": 5.1656,
+      "audio_len_s": 4.52,
       "rtf": 1.1428,
-      "first_chunk_s": 1.5164
+      "first_chunk_s": 1.4758
     }
   ]
 }
