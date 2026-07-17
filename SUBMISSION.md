@@ -1,258 +1,222 @@
-# Multilingual Voice AI Pipeline — submission write-up
+# Multilingual voice pipeline — write-up
 
-**Track A (code).** Repo runs; every number below was produced by real runs on the named
-hardware. Reproduction: `README.md`. Honest build log incl. dead ends: `notes/WORKLOG.md`.
-Full licensing + limitations: `notes/LIMITATIONS_AND_DISCLOSURE.md`.
+Track A. The repo runs, and every number in here came out of a real run on my laptop.
+Setup and reproduction steps are in the README. The day-by-day log, including the things
+that broke, is in `notes/WORKLOG.md`. Licensing details in `notes/LIMITATIONS_AND_DISCLOSURE.md`.
 
-## Recommended setup (one paragraph)
+## What I'd ship
 
-Use a **per-language router of open-source models, MLX-first for Apple Silicon**, split by
-whether the request needs *speed* or *naturalness*. **Speed/intelligibility path: English and
-Hindi → Kokoro-82M** (Apache-2.0) — RTF ~0.09, ~0.3–0.5 s latency, 1.3 % English WER — but my
-3-listener blinded panel rated it only ~2.8/5, audibly synthetic prosody despite predicted-MOS
-of 4.6. **Naturalness/cloning path → Chatterbox-Multilingual (4-bit MLX)** — one 607 MB
-Apache/MIT checkpoint, unwatermarked on this path, cloning **my own voice**: the Hindi clone
-was the panel's best TTS at **human MOS 4.47** (the only system to pass the 4.0 bar; A/B
-"same speaker", cosine 0.78) at the honest cost of RTF ~1.1 and 4–5 s clips. English cloning
-worked only with a studio reference (0.73) and failed on my phone-mic one (0.48, humans said
-"different") — reference capture quality turns out to be a product feature. **Arabic** has no
-fast+natural option: **Habibi-TTS MSA** (Apache-2.0) wins accuracy (WER 9.4 %, the only Arabic
-under the 10 % bar; cosine 0.78) but is offline-only at RTF ~5; Chatterbox is the practical
-middle (WER 13.4 %); the MMS floor is fast but robotic. Evaluation is fully open-source
-(faster-whisper + Hindi-tuned cross-check, Distill-MOS/UTMOS as labeled proxies anchored to
-real speech, ECAPA cosine with ceiling/floor calibration, blinded P.808-style human panel).
-No closed API anywhere. **Arabic** is the hard case: its only *fast* option is the
-robotic MMS VITS floor, while the *quality/accuracy* winner is **Habibi-TTS MSA** (Apache-2.0,
-F5 fine-tune) — best Arabic WER (9.4 %) and cloning (cosine 0.779), predicted MOS at
-real-speech level — but RTF ~5 makes it offline/batch-only here. The whole evaluation stack is
-open-source (faster-whisper + a Hindi-tuned Whisper cross-check for WER, Distill-MOS + UTMOS
-for predicted naturalness, SpeechBrain ECAPA for speaker cosine, a blinded P.808-style human
-kit). No closed API is used anywhere, for generation or evaluation.
+A per-language router, split by what the request actually needs: speed or naturalness.
+No single open model wins all three languages, and the hint in the brief was right —
+I checked anyway.
 
-## Hardware
+For **fast responses** in English and Hindi I'd use **Kokoro-82M** (Apache-2.0, runs on MLX).
+It's absurdly fast on a fanless 8GB MacBook: RTF around 0.09, first audio in 0.3–0.5s,
+1.3% round-trip WER in English. The catch, which I only learned from the listening test:
+people hear it as robotic. My 3-listener panel scored it ~2.8/5 while the automated MOS
+predictors gave it 4.6. More on that below, because it ended up being the most useful
+result in the whole exercise.
 
-MacBook Pro, **Apple M2, 8 GB unified RAM**, macOS 15, **no CUDA GPU**. All latency/RTF are
-warm (model resident), synthesis-call → first audio chunk (streaming) or full waveform (batch),
-measured on the ~10-word `*_01` row. Cold model-load is reported separately in each
-`timings.json`. The 8 GB budget is the binding constraint — it rules PyTorch cloning models
-out (they swap-death near 10 GB) and forces the MLX-first design.
+For **naturalness and voice cloning** I'd use **Chatterbox-Multilingual, 4-bit MLX build**.
+One 607MB checkpoint covers all three languages with zero-shot cloning. The Hindi clone of
+my own voice was the best-rated system in the listening test (4.47/5 — the only one to
+clear the 4.0 bar) and raters called it the same speaker. It costs real time though:
+RTF ~1.1, so a sentence takes 4–5 seconds.
 
-## Results vs. the section-3 targets
+**Arabic** is genuinely the hard one. **Habibi-TTS** (the Apache-licensed MSA checkpoint)
+was the accuracy winner — 9.4% WER, the only Arabic system under the 10% target, and the
+strongest Arabic clone — but at RTF ~5 it's batch-only on this hardware. Chatterbox is the
+practical middle at 13.4% WER. MMS-TTS is fast and tiny but sounds like 2015.
 
-Full machine-readable table: `results/results.md` (regenerate with `eval/aggregate.py`).
-Targets: MOS ≥ 4.0 · speaker cosine ≥ 0.75 (see note) · latency < 2 s full / < 0.5 s first
-chunk · RTF ≤ 0.5 · round-trip WER ≤ 0.10.
+Generation and evaluation are open-source end to end. No closed APIs anywhere.
 
-| Lang | Model (role) | pred-MOS (D/U) | Spk cos | Latency full / 1st | RTF | WER | Clone |
+## Hardware and how I measured
+
+MacBook Pro, Apple M2, 8GB unified RAM, no CUDA. The 8GB is what shaped the design:
+PyTorch builds of the cloning models swap-death around 10GB, so everything that could run
+on MLX runs on MLX, one model in memory at a time.
+
+Latency and RTF are measured warm (model already loaded), from the synthesis call to first
+audio chunk or full waveform, on the ~10-word `*_01` sentence per language. The first
+utterance gets re-run so nobody pays one-time compilation cost in the numbers. Cold-load
+times are in each `timings.json`.
+
+## Results against the section-3 targets
+
+Regenerate with `eval/aggregate.py`; full table in `results/results.md`.
+Targets: MOS ≥ 4.0, speaker cosine ≥ 0.75, latency < 2s full / < 0.5s first chunk,
+RTF ≤ 0.5, WER ≤ 10%.
+
+| Lang | Model | Human MOS | Pred. MOS (D/U) | Spk cos | Latency full/1st | RTF | WER |
 |---|---|---|---|---|---|---|---|
-| **EN** | **Kokoro-82M** (default) | 4.63 / 4.51 | — | 0.29 s / 0.28 s | **0.095** | **1.3 %** | ✗ |
-| EN | Chatterbox-ML 4bit (clone, my voice) | 3.96 / 3.55 | 0.480 | 3.87 s / 0.95 s | 1.13 | 17.1 % | ✓ |
-| **HI** | **Kokoro-82M** (default) | 4.64 / 4.26 | — | 0.48 s / 0.47 s | **0.092** | 11.1 %* | ✗ |
-| HI | Chatterbox-ML 4bit (clone, my voice) | 4.01 / 3.17 | **0.778** | 5.17 s / 1.48 s | 1.10 | 16.1 % | ✓ |
-| AR | MMS-TTS +digit-verbalize (floor) | 4.44 / 3.37 | — | 0.73 s / 0.73 s | 0.126 | 22.1 % | ✗ |
-| AR | Chatterbox-ML 4bit (clone) | 4.58 / 3.15 | 0.743 | 5.63 s / 1.81 s | 1.06 | **13.4 %** | ✓ |
-| **AR** | **Habibi-TTS MSA** (specialist) | 4.44 / 2.93 | **0.779** | 36.4 s / 36.4 s | 5.0 | **9.4 %** | ✓ |
+| EN | Kokoro-82M | 2.87 | 4.63 / 4.51 | — | 0.29s / 0.28s | **0.095** | **1.3%** |
+| EN | Chatterbox (clone of me) | 3.67 | 3.96 / 3.55 | 0.48 | 3.87s / 0.95s | 1.13 | 17.1% |
+| HI | Kokoro-82M | 2.80 | 4.64 / 4.26 | — | 0.48s / 0.47s | **0.092** | 11.1%* |
+| HI | Chatterbox (clone of me) | **4.47** | 4.01 / 3.17 | **0.778** | 5.17s / 1.48s | 1.10 | 16.1% |
+| AR | MMS-TTS + digit fix | n/r | 4.44 / 3.37 | — | 0.73s / 0.73s | 0.126 | 22.2% |
+| AR | Chatterbox (corpus narrator) | n/r | 4.58 / 3.15 | 0.743 | 5.63s / 1.81s | 1.06 | 13.4% |
+| AR | Habibi-TTS MSA | n/r | 4.44 / 2.93 | **0.779** | 36.4s | 5.0 | **9.4%** |
 
-\* Hindi WER is ASR-bound, not TTS-bound — see failure modes. D/U = Distill-MOS / UTMOS,
-English-trained proxies (not a substitute for the human panel; for AR/HI read against the
-real-speech anchor, not the absolute value). Cloning references: English and Hindi are **my
-own voice** (phone-mic, recorded for this task); Arabic is the CC BY 4.0 Arabic Speech Corpus
-narrator. An earlier run with studio corpus references for EN/HI is preserved in git history —
-the comparison between the two is itself a finding (below).
+\* mostly ASR error, not TTS error — explained under failure modes.
+n/r = not rated by the human panel (no Arabic-fluent listener in time; see below).
 
-## Human MOS — the graded naturalness metric
+Latency and RTF: Kokoro and MMS clear the bars easily; the cloning models don't, on this
+hardware. WER: only Kokoro-EN and Habibi-AR get under 10%.
 
-3-listener blinded panel (me + two recruited raters), P.808-style ACR over randomized clips
-with a hidden real-speech anchor; 5 clips per system per rater. **The anchor scored highest
-(4.67), validating the panel.** Arabic naturalness was **not** rated — no Arabic-fluent
-listener was available; that is disclosed rather than papered over (Arabic gets predicted-MOS
-+ the A/B identity judgments below).
+## The listening test, and why it mattered
 
-| System | Human MOS | 95 % CI | Predicted (D/U) | Verdict vs 4.0 target |
-|---|---|---|---|---|
-| hi/chatterbox (clone of my voice) | **4.47** | ±0.46 | 4.01 / 3.17 | **pass** |
-| en/chatterbox (clone of my voice) | 3.67 | ±0.61 | 3.96 / 3.55 | miss |
-| en/kokoro | 2.87 | ±0.69 | 4.63 / 4.51 | miss |
-| hi/kokoro | 2.80 | ±0.60 | 4.64 / 4.26 | miss |
-| *real-speech anchor* | *4.67* | ±0.54 | — | *(sanity check)* |
+Three listeners (me plus two people I recruited), blinded and randomized clips, a hidden
+real-speech recording mixed in as a sanity anchor, five clips per system per rater.
+Sheets and scoring code in `eval/listening_test/`; raw results in `results/human_mos.json`.
 
-Two findings worth the whole exercise:
+The anchor came back highest (4.67), so the panel wasn't rating noise. And then it flatly
+contradicted the automated predictors:
 
-1. **The human panel inverts the predicted-MOS ranking.** Kokoro — which the automated
-   predictors scored at 4.6 — lands at 2.8–2.9 with human listeners, while the Chatterbox
-   clones they score lower win with humans. The predictors reward clean, artifact-free audio;
-   humans hear Kokoro's flat prosody and mark it synthetic. This is precisely why the brief's
-   "the listening test matters" is right, and why every predicted-MOS number above is labeled
-   a proxy.
-2. **Cloning A/B (same-speaker judgments, 3 raters):** hi clone **2× same / 1 unsure** —
-   confirms the 0.78 cosine; en clone **2× different / 1 unsure** — humans independently
-   confirm the phone-mic reference finding flagged by the 0.48 cosine. Arabic (n=2, identity
-   judgment needs no fluency): chatterbox 1 same / 1 unsure; habibi 1 different / 1 unsure —
-   too small to call, noted as such.
-
-Panel caveats, stated plainly: 3 listeners, 15 ratings/system → wide CIs (±0.5–0.7); listeners
-are Indian-English/Hindi speakers, which may penalize Kokoro's American-accented English less
-or more than a US panel would; one rater's unlabeled sheet was interpreted as Hindi by
-elimination. Raw sheets preserved in `results/human_mos.json`.
-
-**Predicted MOS vs. real-speech anchors** (same predictors, this language's reference speaker) —
-absolute cross-language MOS is invalid, so read TTS against its anchor:
-
-| Lang | real anchor D / U | best TTS here D / U |
+| System | Humans | Predictors said |
 |---|---|---|
-| EN | 4.00 / **2.42** (my phone-mic voice) | Kokoro 4.63 / 4.51 — TTS scores far above the real recording |
-| AR | 4.39 / **3.02** (studio narrator) | Habibi 4.44 / 2.93, Chatterbox 4.58 / 3.15 (**at real-speech level**) |
-| HI | 4.08 / **2.60** (my phone-mic voice) | Kokoro 4.64 / 4.26 — same pattern |
+| HI Chatterbox (my voice) | **4.47 ± 0.46** | 4.01 / 3.17 |
+| EN Chatterbox (my voice) | 3.67 ± 0.61 | 3.96 / 3.55 |
+| EN Kokoro | 2.87 ± 0.69 | 4.63 / 4.51 |
+| HI Kokoro | 2.80 ± 0.60 | 4.64 / 4.26 |
 
-The anchors are the headline: **genuine human speech scores as low as UTMOS 2.4–3.0** on these
-English-trained predictors (my own phone-mic recordings score *below* the clones of me). They
-reward channel cleanliness as much as naturalness, so absolute predicted-MOS numbers cannot be
-compared across languages or recording conditions — the human panel is the arbiter.
+Kokoro, which UTMOS and Distill-MOS loved, got hammered by actual ears. The predictors are
+trained to detect artifacts and noise; Kokoro produces spotless audio with flat prosody, and
+that flatness is exactly what humans punish. I went in expecting the panel to roughly confirm
+the predicted numbers and it inverted them instead. Every predicted-MOS figure in this doc
+should be read with that in mind — I kept them because they're still useful for comparing
+similar systems, but the panel is the metric that counts.
 
-**Speaker-cosine note.** The cosine is from VoxCeleb-trained ECAPA-TDNN; a generic "0.75"
-is embedding-specific. For *this* embedding, genuine same-speaker pairs top out ~0.72–0.80
-and different speakers sit near 0. Measured against the per-language real-vs-real ceiling C
-and real-vs-other floor F (`run_sim.py --ref2/--other`):
+The same-speaker A/B judgments lined up with the embedding math, which was reassuring:
+the Hindi clone got 2× "same" / 1 "unsure" (cosine 0.78), and the English clone got
+2× "different" (cosine 0.48 — see the next section for why English cloning went wrong).
 
-| Lang | clone cosine S | ceiling C | floor F | normalized (S−F)/(C−F) |
+Caveats I want on the record: 3 listeners is a small panel and the CIs are wide (±0.5–0.7).
+Nobody on the panel speaks Arabic, so Arabic has no human naturalness score — I'd rather
+say that than invent one. The A/B identity judgments don't need language fluency, so Arabic
+did get those (n=2, split verdicts, too small to conclude much). One rater returned an
+unlabeled sheet that I matched to Hindi by elimination.
+
+## Cloning: the reference recording is half the battle
+
+I recorded my own voice for the English and Hindi references (phone mic, quiet room;
+Arabic uses the professional narrator from the CC-BY-4.0 Arabic Speech Corpus, since I
+don't speak Arabic). Speaker similarity is ECAPA cosine, and since a bare "0.75 target"
+means nothing without context for a given embedding, I calibrated per language: ceiling =
+two different real takes of the same speaker, floor = two different speakers.
+
+| Clone | cosine | ceiling | floor | position |
 |---|---|---|---|---|
-| EN (Chatterbox, my voice) | 0.480 (min 0.35) | 0.833 | 0.045 | **0.55** |
-| AR (Chatterbox, corpus narrator) | 0.743 (min 0.67) | 0.851 | 0.064 | 0.86 |
-| AR (Habibi MSA, corpus narrator) | 0.779 (min 0.70) | 0.851 | 0.064 | 0.91 |
-| HI (Chatterbox, my voice) | 0.778 (min 0.73) | 0.923 | 0.155 | 0.81 |
+| HI Chatterbox (me) | 0.778 | 0.923 | 0.155 | 0.81 |
+| AR Habibi (narrator) | 0.779 | 0.851 | 0.064 | 0.91 |
+| AR Chatterbox (narrator) | 0.743 | 0.851 | 0.064 | 0.86 |
+| EN Chatterbox (me) | 0.480 | 0.833 | 0.045 | 0.55 |
 
-Hindi and both Arabic clones are **clearly the same speaker** (0.81–0.91 of their ceilings;
-Habibi is the strongest Arabic clone). **English is an honest miss at 0.55 normalized** —
-"related voice", not "same person". The control that makes this a finding rather than a
-mystery: the identical pipeline cloned a studio-mic LibriTTS reference at 0.725 (0.88 of
-ceiling), and a second take of my voice scored the same 0.47 — so the gap is the reference
-recording channel (and possibly accent coverage), not the model config or the specific cut.
-For a voice-agent product this is the number-one operational lesson: **reference capture
-quality is a product feature**, and the intake flow needs level/noise checks or reference
-enhancement before conditioning.
+Three of the four are clearly the same speaker. English is not, and I dug into why: earlier
+in the week I'd run the identical pipeline against a studio-recorded LibriTTS reference and
+got 0.725. Swapping in my phone recording dropped it to 0.48, and a second take of my voice
+scored the same 0.47, so it isn't the specific cut — it's the recording channel (possibly
+plus accent coverage). Hindi degraded much less (0.87 studio → 0.78 phone). For a voice
+product this is a design input, not a footnote: customers will hand you phone-quality
+references, so the intake flow needs level/noise checks or reference enhancement before
+conditioning, and English apparently needs it most.
 
-## The call, per language, and why
+Predicted MOS told the same story from another angle. My genuine recorded voice scores
+UTMOS 2.4–2.6 — lower than the clones of me. Real Arabic studio speech scores 3.02. So I
+report a real-speech anchor per language (`results/mos_anchors.json`) and read every
+predicted score against it rather than as an absolute.
 
-**English → route by what matters.** For **latency + intelligibility** (IVR prompts, agent
-responses read fast), **Kokoro-82M**: 5–10× under the latency/RTF bars, WER 1.3 %, hard-token
-WER 4.9 % — but the human panel rates it only 2.87, audibly synthetic prosody. For
-**naturalness**, **Chatterbox** (human MOS 3.67, the best-rated English TTS here) at the cost
-of RTF ~1.1 and WER. Honest bottom line: **no English system passed the 4.0 human-MOS bar on
-this panel**, and English cloning is only trustworthy with a quality reference (0.73 studio
-vs 0.48 phone-mic, confirmed "different" by human A/B).
+## Per-language calls
 
-**Hindi → Chatterbox clone for quality (the benchmark's best result), Kokoro for speed.**
-The clone of my own phone-mic voice scored **human MOS 4.47 — the only system to pass the
-4.0 bar** — with A/B "same speaker" and cosine 0.778. Kokoro-hi stays the latency pick (RTF
-0.092, 0.48 s) and its 11.1 % WER is ASR-dominated (see below), but human listeners rate its
-espeak-G2P prosody 2.80 — fast, intelligible, and audibly robotic. Where the product can
-afford ~5 s generation or streaming chunks, Hindi should ship the cloning path.
+**English.** Kokoro for anything latency-sensitive; it's also the only system here I'd
+trust with numbers and names untouched (hard-token WER 4.9%). When naturalness matters
+more, Chatterbox — humans rated it a full point above Kokoro. Neither cleared the 4.0
+human-MOS bar on my panel, which I'm reporting as-is. English cloning only works with a
+decent reference recording.
 
-**Arabic → Habibi-TTS MSA for quality (offline), Chatterbox for practical cloning; MMS only
-as a floor.** Habibi MSA (F5-TTS fine-tune, purpose-built for Arabic, Apache-2.0) is the
-**accuracy + fidelity winner**: round-trip WER **9.4 %** (the only Arabic system under the 10 %
-bar), best speaker cosine (0.779, 0.91 of ceiling), and predicted MOS at real-speech level —
-but RTF ~5 and 36 s clips make it **strictly offline/batch** on this hardware. Chatterbox-ML is
-the **pragmatic real-time-ish pick**: cloning, 13.4 % WER, one model shared with EN/HI, first
-chunk ~1.8 s. The MMS floor is intelligible after the digit fix (30.2 %→22.1 % WER) but robotic
-and can't clone. Net: Arabic is the hardest language — you can have *natural + accurate +
-cloning* (Habibi) **or** *fast + cloning* (Chatterbox), not both at once on an 8 GB CPU/MPS box.
+**Hindi.** The surprise winner. The Chatterbox clone of my voice was the panel's favorite
+system overall and passed both the MOS and similarity targets; if the product can absorb
+~5s generation (or stream in chunks), that's the ship. Kokoro-hi stays the fast path.
+Its 11.1% WER is misleading: Whisper's own error floor on clean Hindi speech is ~19%, and
+a Hindi-finetuned Whisper cross-check agreed with large-v3 on different rows (each nails
+what the other flubs), so the TTS-attributable error is roughly 6%. The one failure both
+ASRs agree on is Hinglish — espeak's G2P mangles Latin-script words inside Devanagari.
 
-## Metrics & methodology (open-source throughout)
+**Arabic.** Take your pick of tradeoffs. Habibi MSA when quality and accuracy matter and
+you can batch (9.4% WER, best clone, RTF 5). Chatterbox when you need it interactive-ish
+(13.4% WER, first chunk 1.8s). MMS only as a tiny fallback. What I couldn't find in open
+source: fast + natural + Arabic in one model with a usable license.
 
-- **Round-trip WER** — faster-whisper large-v3 (CT2 int8, CPU), **language forced** so a
-  mis-pronounced clip is penalized, not silently re-detected. Both sides pass the same
-  per-language normalizer (`eval/normalizers.py`: English Whisper normalizer; Arabic
-  dediacritization + alef/hamza/taa-marbuta folding; Devanagari-safe Hindi + num2words digit
-  verbalization). WER without stated normalization is meaningless; ours is in-repo.
-- **Predicted MOS** — Distill-MOS (primary) + UTMOS22 (literature-comparable). English-trained
-  proxies; for AR/HI we report against a same-language real-speech anchor. **The graded MOS is
-  the human panel** (`eval/listening_test/`, blinded P.808-style ACR + cloning A/B, hidden real
-  anchor, ≥3 native/fluent listeners/language) — the one step that cannot be automated.
-- **Speaker similarity** — SpeechBrain ECAPA cosine with ceiling/floor calibration (above).
-- **Latency / RTF** — warm, in-pipeline `TimingRecorder`, first row re-run to drop compilation.
+## Extra metrics I added
 
-## Bonus metrics (added — the ones that changed how I read the results)
+The section-3 six left gaps, so I added three (code: `eval/extra_metrics.py`,
+table: `results/extra_metrics.md`):
 
-Full table: `results/extra_metrics.md` (regenerate with `eval/extra_metrics.py`). Computed
-from the audio + existing WER, so cheap to re-run.
+**Hard-token WER** — WER computed only on the rows with names, numbers, currency, digit
+strings and acronyms. It runs 3–5× the corpus WER for every system (Kokoro-EN: 1.3% corpus
+but 4.9% hard-token; my English clone: 58%). Corpus WER flatters everyone; this is the
+number a voice agent actually lives or dies by, and it says none of these models should
+read an account number without a text-normalization frontend.
 
-| System | Hard-token WER | Expressiveness (emo/neutral F0) | Mean F0 std |
-|---|---|---|---|
-| en/kokoro | **0.049** | 1.17 | 38.6 |
-| en/chatterbox (my voice) | 0.585 | 3.12† | 33.8 |
-| hi/kokoro | 0.155 | 1.14 | 40.9 |
-| hi/chatterbox (my voice) | 0.278 | 0.72 | 17.7 |
-| ar/mms_vd | 0.396 | 0.94 | 34.0 |
-| ar/chatterbox | 0.264 | 0.62 | 27.9 |
-| ar/habibi | 0.245 | **1.31** | 42.5 |
+**Expressiveness** — pitch spread on the emotion-row sentence divided by the neutral row.
+The MMS floor barely moves (0.7–0.9, it reads excitement like a grocery list); Habibi
+genuinely modulates (1.31). It also flagged that Chatterbox-Arabic flattens on emotional
+text (0.62), which I'd want a native listener to verify.
 
-† single-row ratio inflated by a near-monotone neutral row on this clone; treat qualitatively.
+**Audio hygiene** — clipping and edge-silence checks. Everything came back clean, which
+means the differences above are real and not artifacts.
 
-- **Hard-token WER** (WER on the names/numbers/currency/digits/acronym rows only) is the
-  metric I trust most for a real voice agent, and it is **3–5× the corpus WER** for every
-  system — a model can ace overall intelligibility and still misread an account number or a
-  name. Kokoro English is the only system that stays comfortably safe here (4.9 %); everything
-  else — and especially the phone-mic clones (en 0.59) — needs the text-normalization frontend
-  from the roadmap before it touches live numbers.
-- **Expressiveness** (pitch spread on the emotion row ÷ the neutral row) separates models that
-  MOS and WER rate as tied: the MMS floor barely modulates (0.72–0.94, i.e. it reads an
-  exclamation like a ledger), while Habibi (1.31) genuinely lifts pitch for affect. Chatterbox
-  on Arabic actually *flattens* on the emotion row (0.62) — a concrete weakness the human panel
-  should confirm.
-- **Audio hygiene** (clipping / edge-silence): clean across the board (max clipped ≈ 0), so no
-  system is winning or losing on artefacts — the differences above are real, not glitches.
+Given more time I'd add energy cost per second of audio, prosody drift on paragraph-length
+input, and a bilingual rater scoring code-switch pronunciation.
 
-Other metrics worth adding with more time (noted, not run): GPU/energy cost per second of
-audio, long-form prosody drift on paragraph-length input, and code-switch pronunciation
-accuracy scored by a bilingual rater.
+## Where it breaks
 
-## Where it breaks (honest failure modes)
+- **Arabic digits, silently.** MMS's character tokenizer drops characters it doesn't know,
+  so "1249" just never gets spoken. Found it staring at deletion-heavy WER transcripts.
+  Fixed with num2words pre-verbalization in the frontend: 30.2% → 22.2% WER. I kept both
+  runs in `outputs/` for the before/after.
+- **Hinglish.** Kokoro-hi's worst row by far (0.41 WER on both ASRs). Inline English words
+  in Devanagari sentences need transliteration before G2P; that's a frontend fix, not a
+  model fix.
+- **Phone-mic cloning references** (the 0.48 story above).
+- **Cloning isn't real-time on 8GB.** RTF ~1.1 misses the 0.5 target. First chunk lands at
+  0.95–1.5s, so chunked streaming would make it feel fine, but the sub-500ms streaming bar
+  needs GPU-class hardware or a smaller model.
+- **Predicted MOS can't be trusted alone.** It penalizes real recordings, misses prosody,
+  and my panel inverted its rankings. Anchors + humans or it doesn't count.
+- **Arabic human MOS is missing.** No fluent listener in time. The kit is built and blinded;
+  extending the panel is a ten-minute ask per rater.
+- **`en_03`** ("March 23rd at 3:45 PM") — Kokoro's one English WER miss. Dates and clock
+  times belong in the normalization frontend too.
 
-- **Hindi WER is ASR-confounded.** faster-whisper large-v3 gives Hindi 11.1 %; the Hindi-tuned
-  `vasista22/whisper-hindi-medium` gives 12.3 % **but on different rows** — the fine-tuned model
-  nails the number/date rows (`hi_03`, `hi_07` → 0.00) while reading digit strings by another
-  convention (`hi_11` → 0.58). Vanilla Whisper's Hindi floor on *clean human speech* is ~19 %,
-  so much of the 11 % is recognizer error, not TTS error. Taking the min over the two ASRs
-  per row bounds Kokoro-hi's true intelligibility error well under 10 %.
-- **Arabic digits.** MMS's char-level VITS **silently drops Arabic-numeral digits** (OOV chars
-  discarded) — `ar_04`/`ar_11` were deletion-dominated until a `num2words` frontend was added
-  (WER 30.2 %→22.1 %). Found from the transcripts, fixed, both runs kept for the before/after.
-- **English date/time.** `en_03` ("March 23rd at 3:45 PM") is Kokoro's only WER miss — ordinal
-  + clock-time formatting.
-- **Zero-shot cloning is only as good as the reference recording.** The same pipeline that
-  cloned a studio reference at cosine 0.725 managed only 0.48 on my phone-mic English
-  recording (Hindi degraded less: 0.87→0.78). A second take scored identically, isolating the
-  cause to the reference channel/accent rather than the cut. Production mitigation: reference
-  intake checks (level, noise, duration), reference enhancement before conditioning, or brief
-  target-speaker fine-tuning.
-- **Cloning is not real-time on 8 GB.** Chatterbox RTF ~1.1 and 4–5 s full clips fail the RTF
-  ≤ 0.5 / < 2 s targets that fixed-voice Kokoro meets. First-chunk (0.95–1.5 s) is usable but
-  the sub-500 ms streaming target needs streaming/chunking or GPU-class hardware.
-- **Predicted MOS penalizes real speech and misses prosody.** My genuine phone-mic recordings
-  score UTMOS 2.4–2.6 — *below* the clones of me — and the human panel then inverted the
-  predicted ranking entirely (Kokoro predicted 4.6, humans 2.8). The predictors measure channel
-  cleanliness, not humanness; absolute numbers are not comparable across languages, recording
-  conditions, or model families. Hence anchors + the human panel as the graded metric.
-- **Human-MOS coverage gap.** No Arabic-fluent listener was available before the deadline, so
-  Arabic naturalness carries predicted-MOS + a 2-rater A/B only. With more time: recruit 2–3
-  native Arabic raters (the kit is ready to send as-is).
+## What's missing in open source, and what I'd do next
 
-## What's still missing & how I'd improve it
+Ranked by return on effort:
 
-Full version with sources: `notes/LIMITATIONS_AND_DISCLOSURE.md`. Headlines: a proper
-per-language text-normalization frontend (numbers/dates/currency/IDs) — the single
-highest-leverage, model-agnostic fix, already proven on Arabic digits; Hinglish handling for
-Hindi (transliterate inline Latin → Devanagari); clause-level streaming to hit sub-500 ms
-first-audio; recalibrated / more-human MOS for Arabic & Hindi; and per-language routing to the
-best *permissively-licensed* specialist so shipped audio stays commercial-safe.
+1. **A real text-normalization frontend** for numbers, dates, currency, and IDs across all
+   three languages. Model-agnostic, no training, and the digit fix already proved the value.
+   This is the single biggest quality lever in the whole stack.
+2. **Hinglish handling**: transliterate embedded Latin script to Devanagari (AI4Bharat
+   IndicXlit) before G2P.
+3. **Reference intake for cloning**: level/noise gate plus enhancement, given the 0.73 → 0.48
+   studio-vs-phone gap.
+4. **Chunked/clause-level streaming** over the fast models to decouple first-audio latency
+   from utterance length.
+5. **MOS predictors recalibrated for AR/HI** against small human-rated sets — or accept that
+   panels are the metric and make running them cheap.
+6. Longer term: the open ecosystem still has no fast, natural, permissively-licensed Arabic
+   model, and dialect coverage in usable licenses is nearly zero. That's a fine-tuning
+   project (Habibi MSA as the base) more than a search problem.
 
 ## Disclosure
 
-Core generation and the entire eval stack are open-source; no closed APIs anywhere. The
-recommended router (Kokoro + Chatterbox-4bit-MLX + Habibi-MSA) is commercial-safe and
-unwatermarked on the path used here (verified — see `notes/LIMITATIONS_AND_DISCLOSURE.md`).
-Cloning references: my own voice for English and Hindi (recorded for this task); Arabic uses
-the CC BY 4.0 Arabic Speech Corpus narrator — provenance and attribution in
-`references/LICENSES.md`. All benchmark numbers come from real runs on the M2; the dated
-build log, including dead ends, is `notes/WORKLOG.md`.
+Everything generating or scoring audio here is open-source; no closed APIs were used for
+anything. The recommended router (Kokoro / Chatterbox-4bit-MLX / Habibi-MSA) is Apache/MIT
+licensed and commercially safe. One correction I made along the way: upstream PyTorch
+Chatterbox watermarks its output (Resemble PerTh) by default, but the MLX build used here
+has no watermarking step — I verified this on-device after initially assuming otherwise,
+so the delivered clips are unwatermarked, and a PyTorch-path deployment would need to
+disclose watermarking to users. Non-commercial components (MMS weights, NISQA, F5 base)
+appear only as benchmark controls, never in the recommended path. Cloning references:
+my own voice for English and Hindi; the CC-BY-4.0 Arabic Speech Corpus narrator for Arabic
+(attribution in `references/LICENSES.md`). Whisper's transcripts of my reference cuts are
+in `references/transcripts.json` if you want to check that it's really me reading.
