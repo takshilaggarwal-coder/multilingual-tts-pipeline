@@ -1,0 +1,53 @@
+{
+  "n_sheets": 6,
+  "raters": [
+    "ishika",
+    "takshil",
+    "vasu"
+  ],
+  "systems": {
+    "REAL_ANCHOR": {
+      "mos": 4.67,
+      "ci95": 0.54,
+      "n_ratings": 6
+    },
+    "en/chatterbox": {
+      "mos": 3.67,
+      "ci95": 0.61,
+      "n_ratings": 15
+    },
+    "en/kokoro": {
+      "mos": 2.87,
+      "ci95": 0.69,
+      "n_ratings": 15
+    },
+    "hi/chatterbox": {
+      "mos": 4.47,
+      "ci95": 0.46,
+      "n_ratings": 15
+    },
+    "hi/kokoro": {
+      "mos": 2.8,
+      "ci95": 0.6,
+      "n_ratings": 15
+    }
+  },
+  "ab": {
+    "ar/chatterbox": {
+      "unsure": 1,
+      "same": 1
+    },
+    "ar/habibi": {
+      "different": 1,
+      "unsure": 1
+    },
+    "en/chatterbox": {
+      "different": 2,
+      "unsure": 1
+    },
+    "hi/chatterbox": {
+      "same": 2,
+      "unsure": 1
+    }
+  }
+}

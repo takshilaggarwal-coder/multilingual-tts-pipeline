@@ -7,15 +7,21 @@ Full licensing + limitations: `notes/LIMITATIONS_AND_DISCLOSURE.md`.
 ## Recommended setup (one paragraph)
 
 Use a **per-language router of open-source models, MLX-first for Apple Silicon**, split by
-whether the request needs a *fixed voice fast* or a *cloned voice*. **Fast fixed-voice path:
-English and Hindi → Kokoro-82M** (Apache-2.0) — RTF ~0.09, ~0.3–0.5 s latency, 1.3 % English
-WER, predicted MOS ~4.6, beating every latency/RTF/intelligibility target on a fanless laptop.
-**Voice cloning, any of the three languages → Chatterbox-Multilingual (4-bit MLX)** — one
-607 MB Apache/MIT checkpoint, unwatermarked on this path. Cloning **my own voice** (recorded
-on a phone for this task): Hindi cosine 0.78 and Arabic (corpus narrator) 0.74 are clearly
-same-speaker, but English lands at 0.48 — a real miss that exposes how sensitive zero-shot
-cloning is to reference channel quality (a studio-mic reference had scored 0.73 on the same
-pipeline; see failure modes). Cost of cloning is real time: RTF ~1.1, 4–5 s clips. **Arabic** is the hard case: its only *fast* option is the
+whether the request needs *speed* or *naturalness*. **Speed/intelligibility path: English and
+Hindi → Kokoro-82M** (Apache-2.0) — RTF ~0.09, ~0.3–0.5 s latency, 1.3 % English WER — but my
+3-listener blinded panel rated it only ~2.8/5, audibly synthetic prosody despite predicted-MOS
+of 4.6. **Naturalness/cloning path → Chatterbox-Multilingual (4-bit MLX)** — one 607 MB
+Apache/MIT checkpoint, unwatermarked on this path, cloning **my own voice**: the Hindi clone
+was the panel's best TTS at **human MOS 4.47** (the only system to pass the 4.0 bar; A/B
+"same speaker", cosine 0.78) at the honest cost of RTF ~1.1 and 4–5 s clips. English cloning
+worked only with a studio reference (0.73) and failed on my phone-mic one (0.48, humans said
+"different") — reference capture quality turns out to be a product feature. **Arabic** has no
+fast+natural option: **Habibi-TTS MSA** (Apache-2.0) wins accuracy (WER 9.4 %, the only Arabic
+under the 10 % bar; cosine 0.78) but is offline-only at RTF ~5; Chatterbox is the practical
+middle (WER 13.4 %); the MMS floor is fast but robotic. Evaluation is fully open-source
+(faster-whisper + Hindi-tuned cross-check, Distill-MOS/UTMOS as labeled proxies anchored to
+real speech, ECAPA cosine with ceiling/floor calibration, blinded P.808-style human panel).
+No closed API anywhere. **Arabic** is the hard case: its only *fast* option is the
 robotic MMS VITS floor, while the *quality/accuracy* winner is **Habibi-TTS MSA** (Apache-2.0,
 F5 fine-tune) — best Arabic WER (9.4 %) and cloning (cosine 0.779), predicted MOS at
 real-speech level — but RTF ~5 makes it offline/batch-only here. The whole evaluation stack is
@@ -53,6 +59,41 @@ real-speech anchor, not the absolute value). Cloning references: English and Hin
 own voice** (phone-mic, recorded for this task); Arabic is the CC BY 4.0 Arabic Speech Corpus
 narrator. An earlier run with studio corpus references for EN/HI is preserved in git history —
 the comparison between the two is itself a finding (below).
+
+## Human MOS — the graded naturalness metric
+
+3-listener blinded panel (me + two recruited raters), P.808-style ACR over randomized clips
+with a hidden real-speech anchor; 5 clips per system per rater. **The anchor scored highest
+(4.67), validating the panel.** Arabic naturalness was **not** rated — no Arabic-fluent
+listener was available; that is disclosed rather than papered over (Arabic gets predicted-MOS
++ the A/B identity judgments below).
+
+| System | Human MOS | 95 % CI | Predicted (D/U) | Verdict vs 4.0 target |
+|---|---|---|---|---|
+| hi/chatterbox (clone of my voice) | **4.47** | ±0.46 | 4.01 / 3.17 | **pass** |
+| en/chatterbox (clone of my voice) | 3.67 | ±0.61 | 3.96 / 3.55 | miss |
+| en/kokoro | 2.87 | ±0.69 | 4.63 / 4.51 | miss |
+| hi/kokoro | 2.80 | ±0.60 | 4.64 / 4.26 | miss |
+| *real-speech anchor* | *4.67* | ±0.54 | — | *(sanity check)* |
+
+Two findings worth the whole exercise:
+
+1. **The human panel inverts the predicted-MOS ranking.** Kokoro — which the automated
+   predictors scored at 4.6 — lands at 2.8–2.9 with human listeners, while the Chatterbox
+   clones they score lower win with humans. The predictors reward clean, artifact-free audio;
+   humans hear Kokoro's flat prosody and mark it synthetic. This is precisely why the brief's
+   "the listening test matters" is right, and why every predicted-MOS number above is labeled
+   a proxy.
+2. **Cloning A/B (same-speaker judgments, 3 raters):** hi clone **2× same / 1 unsure** —
+   confirms the 0.78 cosine; en clone **2× different / 1 unsure** — humans independently
+   confirm the phone-mic reference finding flagged by the 0.48 cosine. Arabic (n=2, identity
+   judgment needs no fluency): chatterbox 1 same / 1 unsure; habibi 1 different / 1 unsure —
+   too small to call, noted as such.
+
+Panel caveats, stated plainly: 3 listeners, 15 ratings/system → wide CIs (±0.5–0.7); listeners
+are Indian-English/Hindi speakers, which may penalize Kokoro's American-accented English less
+or more than a US panel would; one rater's unlabeled sheet was interpreted as Hindi by
+elimination. Raw sheets preserved in `results/human_mos.json`.
 
 **Predicted MOS vs. real-speech anchors** (same predictors, this language's reference speaker) —
 absolute cross-language MOS is invalid, so read TTS against its anchor:
@@ -92,19 +133,20 @@ enhancement before conditioning.
 
 ## The call, per language, and why
 
-**English → Kokoro-82M (default), Chatterbox for cloning — with a caveat.** Kokoro passes
-*every* automated target and is 5–10× under the latency/RTF bars on a fanless laptop; nothing
-else came close on speed-for-quality. Its only miss is a minor date/time formatting slip
-(`en_03`). Kokoro can't clone (fixed voice bank). Chatterbox cloned a studio-quality reference
-convincingly (cos 0.725, 0.88 of ceiling) but only reached 0.48 on my phone-mic recording —
-so the recommendation stands *conditional on reference quality*, and the intake flow must
-enforce it (see failure modes).
+**English → route by what matters.** For **latency + intelligibility** (IVR prompts, agent
+responses read fast), **Kokoro-82M**: 5–10× under the latency/RTF bars, WER 1.3 %, hard-token
+WER 4.9 % — but the human panel rates it only 2.87, audibly synthetic prosody. For
+**naturalness**, **Chatterbox** (human MOS 3.67, the best-rated English TTS here) at the cost
+of RTF ~1.1 and WER. Honest bottom line: **no English system passed the 4.0 human-MOS bar on
+this panel**, and English cloning is only trustworthy with a quality reference (0.73 studio
+vs 0.48 phone-mic, confirmed "different" by human A/B).
 
-**Hindi → Kokoro-82M (default), Chatterbox for cloning.** Same story: Kokoro is fast (RTF
-0.092, 0.48 s) and natural. Its 11.1 % round-trip WER looks like a miss but is dominated by
-ASR — see below. Chatterbox-ML cloning **held up even on my phone-mic reference** (cosine
-0.778, 0.81 of ceiling — clearly me), with cloned-output WER of 16.1 %; against the earlier
-studio reference it scored 0.87, the best clone of the whole benchmark.
+**Hindi → Chatterbox clone for quality (the benchmark's best result), Kokoro for speed.**
+The clone of my own phone-mic voice scored **human MOS 4.47 — the only system to pass the
+4.0 bar** — with A/B "same speaker" and cosine 0.778. Kokoro-hi stays the latency pick (RTF
+0.092, 0.48 s) and its 11.1 % WER is ASR-dominated (see below), but human listeners rate its
+espeak-G2P prosody 2.80 — fast, intelligible, and audibly robotic. Where the product can
+afford ~5 s generation or streaming chunks, Hindi should ship the cloning path.
 
 **Arabic → Habibi-TTS MSA for quality (offline), Chatterbox for practical cloning; MMS only
 as a floor.** Habibi MSA (F5-TTS fine-tune, purpose-built for Arabic, Apache-2.0) is the
@@ -187,10 +229,14 @@ accuracy scored by a bilingual rater.
 - **Cloning is not real-time on 8 GB.** Chatterbox RTF ~1.1 and 4–5 s full clips fail the RTF
   ≤ 0.5 / < 2 s targets that fixed-voice Kokoro meets. First-chunk (0.95–1.5 s) is usable but
   the sub-500 ms streaming target needs streaming/chunking or GPU-class hardware.
-- **Predicted MOS penalizes real speech.** My genuine phone-mic recordings score UTMOS 2.4–2.6 —
-  *below* the clones of me — and Distill-MOS vs UTMOS disagree by >1 point on Arabic. The
-  predictors measure channel cleanliness as much as naturalness; absolute numbers are not
-  comparable across languages or recording conditions. Hence anchors + the human panel.
+- **Predicted MOS penalizes real speech and misses prosody.** My genuine phone-mic recordings
+  score UTMOS 2.4–2.6 — *below* the clones of me — and the human panel then inverted the
+  predicted ranking entirely (Kokoro predicted 4.6, humans 2.8). The predictors measure channel
+  cleanliness, not humanness; absolute numbers are not comparable across languages, recording
+  conditions, or model families. Hence anchors + the human panel as the graded metric.
+- **Human-MOS coverage gap.** No Arabic-fluent listener was available before the deadline, so
+  Arabic naturalness carries predicted-MOS + a 2-rater A/B only. With more time: recruit 2–3
+  native Arabic raters (the kit is ready to send as-is).
 
 ## What's still missing & how I'd improve it
 

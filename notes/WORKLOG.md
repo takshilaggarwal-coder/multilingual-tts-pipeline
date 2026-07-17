@@ -117,3 +117,22 @@ Running log of what I actually did, including the dead ends. Newest at the botto
 - The predicted-MOS anchor story sharpened: my *real* phone-mic voice scores UTMOS 2.4 (en)
   / 2.6 (hi) — lower than the clones of me. These predictors reward channel cleanliness,
   not just naturalness. Human panel remains the graded metric.
+
+## 2026-07-18 — human listening panel (3 raters)
+
+- Collected the blinded panel: me + two recruited raters. Real-world mess as expected —
+  one rater returned Apple `.numbers` files and a PDF instead of CSVs (parsed with
+  numbers-parser + the PDF directly), another left the sheet unlabeled (identified as Hindi
+  by elimination; to confirm with him). One rater's "Almost same" A/B answer mapped to
+  "unsure", conservatively, with the verbatim kept in the comment.
+- **The panel inverted the predicted-MOS ranking — the headline result of the whole
+  benchmark.** Hidden real-speech anchor: 4.67 (panel sane). Hindi Chatterbox clone of my
+  voice: **4.47, the only system over the 4.0 bar**, A/B 2× same / 1 unsure. English
+  Chatterbox: 3.67. Kokoro, which the predictors scored 4.6: **2.87 (en) / 2.80 (hi)** —
+  humans hear the flat prosody the predictors can't. English clone A/B: 2× different —
+  human confirmation of the 0.48-cosine phone-mic finding.
+- Arabic naturalness not rated (no Arabic-fluent rater by the deadline) — disclosed; Arabic
+  got 2-rater A/B identity judgments only (split, n too small to call).
+- Consequence for the recommendation: route by *speed vs naturalness*, not one winner per
+  language — Kokoro for latency-critical output, the Chatterbox clone where naturalness
+  matters and ~5 s generation is acceptable. Updated SUBMISSION.md/README accordingly.

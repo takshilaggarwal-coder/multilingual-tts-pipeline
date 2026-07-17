@@ -4,17 +4,18 @@ Take-home case study (Track A: code). Three working open-source TTS pipelines �
 language — benchmarked for naturalness, speaker similarity (cloning), latency, real-time
 factor, and round-trip intelligibility, **all runs executed for real on the hardware below**.
 
-> **Recommended setup (one paragraph).** Per-language router, all open-source: **English →
-> Kokoro-82M** (Apache-2.0, MLX): RTF 0.095, 0.29 s full-clip latency, 1.3 % round-trip WER,
-> predicted MOS 4.6 — passes every automated target on a fanless 8 GB laptop. **Hindi →
-> Kokoro-82M Hindi voices** for speed (RTF 0.092, 0.48 s) with **Chatterbox-Multilingual
-> 4-bit (MLX)** as the cloning option; **Arabic → Chatterbox-Multilingual 4-bit** for
-> quality + cloning with **Habibi-TTS MSA** (Apache-2.0, F5) as the specialist alternative
-> and MMS-TTS as the lightweight floor. Cloning uses CC BY 4.0 reference speakers
-> (LibriTTS-R / Arabic Speech Corpus / SYSPIN). Evaluation is fully open-source:
-> faster-whisper large-v3 (+ a Hindi-finetuned Whisper cross-check), Distill-MOS + UTMOS
-> predicted naturalness, SpeechBrain ECAPA speaker cosine, and a blinded P.808-style human
-> listening kit. Exact numbers: `results/results.md`.
+> **Recommended setup (one paragraph).** Per-language router, all open-source, split by
+> speed vs naturalness. Speed path (EN/HI): **Kokoro-82M** (Apache-2.0, MLX) — RTF ~0.09,
+> 0.3–0.5 s latency, 1.3 % English WER, but human listeners rate its prosody ~2.8/5.
+> Naturalness/cloning path: **Chatterbox-Multilingual 4-bit (MLX)** — the Hindi clone of my
+> own voice was the human panel's best TTS (**MOS 4.47**, A/B "same speaker", cosine 0.78)
+> at RTF ~1.1. **Arabic:** **Habibi-TTS MSA** (Apache-2.0) wins accuracy (WER 9.4 %, cosine
+> 0.78) but is offline-only (RTF ~5); Chatterbox is the practical middle; MMS-TTS the fast
+> floor. Cloning references: my own voice (EN/HI) + the CC BY 4.0 Arabic Speech Corpus
+> narrator (AR). Evaluation fully open-source: faster-whisper large-v3 (+ Hindi-finetuned
+> cross-check), Distill-MOS + UTMOS as labeled proxies, SpeechBrain ECAPA cosine, and a
+> 3-listener blinded P.808-style panel (hidden real anchor scored 4.67 — panel sane).
+> Exact numbers: `results/results.md` + `results/human_mos.json`.
 
 ## Hardware (all numbers measured here unless labeled otherwise)
 
