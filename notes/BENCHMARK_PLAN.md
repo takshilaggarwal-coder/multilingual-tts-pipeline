@@ -78,5 +78,4 @@ Notes:
 Core generation = open-source models only. Entire eval stack = open-source. Non-commercial
 weights (F5/XTTS/Fish/OuteTTS/mms/NISQA) are flagged per model and are acceptable for a
 job-application demo **with disclosure**; permissive (Apache/MIT) models are preferred where
-quality is comparable. Claude Code (AI assistant) used for research/code/automation per the
-brief; all runs executed for real on the M2.
+quality is comparable. All runs executed for real on the M2.

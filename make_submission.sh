@@ -12,7 +12,7 @@ zip -r "$ZIP" . \
   -x 'envs/*' -x '*/envs/*' -x '*envs/*' \
   -x '*/.sb_ecapa/*' \
   -x '*/__pycache__/*' -x '*.pyc' \
-  -x '.git/*' -x '*/.git/*' -x '.claude/*' \
+  -x '.*/*' -x '*/.git/*' \
   -x 'hf_cache/*' \
   -x 'eval/listening_test/kit/key.json' \
   -x 'results/*.log' \

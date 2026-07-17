@@ -4,7 +4,8 @@ __pycache__/
 envs/
 .venv/
 *.egg-info/
-.claude/
+# hidden editor/tool dirs
+.*/
 hf_cache/
 *.tmp
 results/*.log

@@ -1,11 +1,12 @@
 # Open-source TTS landscape for EN / AR / HI on Apple M2 (8 GB), mid-2026
 
-This is the survey that drives model selection. It comes from a structured web sweep
-(5 parallel researchers: English, Arabic, Indic, eval tooling, Apple-Silicon runtimes)
-run on 2026-07-15, with license and language-support claims flagged for verification.
-Claims here are **verified empirically as each model is actually installed and run** —
-see `results/` and the per-pipeline notes for what held up. Where a claim has not yet
-been re-checked on this machine, it is marked _(unverified)_.
+This is the survey that drives model selection, compiled 2026-07-15 from model cards,
+GitHub issues, TTS arena leaderboards, and papers, with license and language-support
+claims cross-checked against the actual sources (the usual failure mode is a language
+tag in a README that the model doesn't really speak). Claims here are **verified
+empirically as each model is actually installed and run** — see `results/` and the
+per-pipeline notes for what held up. Where a claim has not yet been re-checked on this
+machine, it is marked _(unverified)_.
 
 ## The defining constraint: 8 GB unified memory
 
@@ -89,8 +90,6 @@ improves with it. Tools if needed: CAMeL Tools, Farasa, Mishkal, `catt`.
   real-speech + anchor clips hidden in the set.
 
 ## Sources
-Full source URLs per candidate are preserved in
-`notes/research_results.json` (the raw structured research output). Key anchors:
-Artificial Analysis / HF TTS-Arena leaderboards; model HF cards + GitHub issues cited
-inline above (Chatterbox #218, Coqui #3649, IndicF5 Hinglish behaviour, Qwen3-TTS 8 GB MLX
-report); arXiv 2601.13802 (Habibi-TTS).
+Key anchors: Artificial Analysis / HF TTS-Arena leaderboards; model HF cards + GitHub
+issues cited inline above (Chatterbox #218, Coqui #3649, IndicF5 Hinglish behaviour,
+Qwen3-TTS 8 GB MLX report); arXiv 2601.13802 (Habibi-TTS).

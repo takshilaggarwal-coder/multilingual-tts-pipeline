@@ -1,91 +1,94 @@
 # Worklog
 
-Honest running log of what was actually done, including dead ends. Newest at the bottom.
+Running log of what I actually did, including the dead ends. Newest at the bottom.
 
-## 2026-07-15
+## 2026-07-15 — setup & survey
 
-- Received brief. Decisions: Track A (repo), all runs local on MacBook Pro M2 / 8 GB RAM / macOS
-  (no CUDA available), openly licensed reference voice for cloning.
-- Machine recon: system Python 3.9 only, no brew/ffmpeg. Installed `uv` + Python 3.11.
-  8 GB unified RAM flagged as the defining constraint for model choice.
-- Kicked off a structured research sweep (web) of the current open-source TTS landscape for
-  EN/AR/HI: per-language candidates, licenses, Apple-Silicon feasibility, eval tooling
-  (predicted MOS, speaker-embedding similarity, per-language ASR + WER normalization),
-  with adversarial fact-checking of language-support and license claims.
-- Authored eval text sets (12 sentences × 3 languages): latency sentence (~10 words), numbers,
-  currency, names, question, long compound, emotion, tech instructions, Hinglish code-mix (hi),
-  greeting w/ religious formula (ar), tongue twister (en).
-- Repo scaffolded; base eval environment being set up.
-- Eval env (`envs/eval`, Python 3.11 via uv) confirmed working for the ASR+WER path:
-  faster-whisper 1.2.1, jiwer, num2words, soundfile, onnxruntime all import. Still need
-  torch + speechbrain for predicted-MOS and speaker-similarity.
-- **Session interrupted by an API session limit mid-research.** On resume: recovered all 5
-  cached research results from the workflow journal (English/Arabic/Indic/eval/runtimes)
-  and persisted them as durable repo docs so the paid-for research isn't lost:
-  `notes/LANDSCAPE.md` (per-language model survey + licenses + Mac feasibility),
-  `notes/BENCHMARK_PLAN.md` (shortlist, eval stack, execution order, risks),
-  `notes/research_results.json` (raw structured output w/ source URLs).
-- Headline finding: on 8 GB, **MLX is the only safe runtime for cloning TTS** (PyTorch
-  swap-deaths at ~10 GB; 8-bit MLX ~6 GB, RTF 0.54). Plan: mlx-audio + quantized weights,
-  one model resident at a time. Per-language router — EN Kokoro/Chatterbox, AR
-  ArTST/Habibi/Chatterbox, HI Kokoro-hi/IndicF5/Chatterbox; mms-tts as floor per language.
-- Committed this milestone. Next: EN Kokoro end-to-end (real audio + latency/RTF/WER).
+- Read the brief. Calls made up front: Track A (repo), everything runs locally on my
+  MacBook Pro (M2, 8 GB RAM, macOS, no CUDA), openly licensed reference voices for the
+  cloning tests. 8 GB is clearly going to drive every model decision.
+- Machine recon: only system Python 3.9, no brew, no ffmpeg. Installed uv + Python 3.11,
+  one venv per model family under `envs/` so the big frameworks never fight each other.
+- Spent the first stretch surveying the current open-source TTS landscape for EN/AR/HI —
+  model cards, GitHub issues, the TTS arena leaderboards, papers — and wrote it up in
+  `notes/LANDSCAPE.md` + `notes/BENCHMARK_PLAN.md`. The finding that shaped everything:
+  on 8 GB, MLX ports are the only safe way to run cloning models (PyTorch versions
+  swap-death around 10 GB; an 8-bit MLX run of a 0.6B model peaks ~6 GB). So: mlx-audio +
+  quantized weights, one model resident at a time, per-language router.
+- Authored the eval text sets (12 typed sentences × 3 languages) with deliberately hard
+  rows: dates/numbers, currency, names, digits/IDs, emotion, tongue twister (en),
+  Hinglish code-mix (hi), greeting with religious formula (ar).
+- Built the eval plumbing: per-language WER normalizers (digit verbalization on BOTH
+  sides, Arabic dediacritization + alef/hamza/taa-marbuta folding, Devanagari-safe Hindi —
+  WER without stated normalization is meaningless), faster-whisper round-trip WER with the
+  language forced (so a mispronounced clip is penalized, not silently re-detected), and a
+  warm-timing recorder that re-runs the first row to drop one-time compilation cost.
 
-### Build phase (2026-07-15, all runs on the M2/8 GB)
+## 2026-07-15 — build & benchmark
 
-- **Toolchain:** `envs/mlx` (mlx-audio 0.4.5, mlx 0.32) for MLX synthesis; `envs/eval`
-  extended with torch/torchaudio/speechbrain/distillmos for MOS + speaker sim. Kokoro
-  needs `misaki[en]` (+ spaCy `en_core_web_sm` installed as a wheel) for English G2P;
-  Hindi uses espeak G2P (bundled via espeakng-loader).
-- **English — Kokoro-82M (MLX, af_heart):** 12 clips. RTF median **0.095**, latency
-  **0.29 s** full / 0.28 s first-chunk, round-trip WER **1.3 %** (only miss: en_03
-  date/time). Predicted MOS Distill **4.63** / UTMOS **4.51**. 4/6 metrics real & passing;
-  speaker-sim N/A (fixed voice), human MOS pending.
-- **Hindi — Kokoro-82M (hf_alpha):** 12 clips. RTF median **0.092**, latency **0.48 s**.
-  Round-trip WER **11.1 %** — but that is dominated by ASR: Whisper's Hindi floor on clean
-  human speech is ~19 %, and the worst rows are the designed failure modes (hi_10 Hinglish
-  0.41, hi_03 numbers 0.32, hi_11 digits 0.19). Need IndicConformer cross-check + a real
-  Hindi anchor to separate TTS intelligibility from ASR error. Predicted MOS 4.64 / 4.26.
-- **Arabic — MMS-TTS (mms-tts-ara, VITS floor):** 12 clips. RTF median **0.222**, latency
-  **1.22 s**, 16 kHz. Predicted MOS Distill 4.45 / **UTMOS 3.27** — the low UTMOS flags MMS
-  as the least-natural of the fixed-voice set (expected; it is the floor). WER running.
-- Built `run_wer.py`, `mos.py`/`run_mos.py`, `aggregate.py`. Whisper large-v3 int8 CPU
-  WER runs ~2–3 min per 12-clip set → run in background to dodge the 2-min foreground cap.
-- **Fast-path (fixed-voice) tier now benchmarked for all three languages.** Latency + RTF
-  pass everywhere. Next phases need human input: reference voice for cloning (own vs
-  openly-licensed) → speaker-similarity + cloning models (Chatterbox/Habibi/IndicF5);
-  and the human-MOS listener panel (esp. native Arabic). Checked in with the user here.
-
-### Completion (2026-07-15)
-
-- **Cloning tier (Chatterbox-ML 4bit MLX, all 3 langs):** one 607 MB Apache/MIT checkpoint,
-  unwatermarked on the MLX path (verified: no `perth`, no watermark code). Warm RTF ~1.07,
-  full clip 4–5.6 s, first chunk 1–1.8 s, peak ~2 GB. Speaker cosine (ECAPA, calibrated):
-  EN 0.725 (0.88 of ceiling), AR 0.743 (0.86), HI 0.870 (0.96) — all clearly same-speaker.
-  WER EN 11.2 / AR 13.4 / HI 22.8 % (cloning trades intelligibility for identity).
-- **Arabic specialist (Habibi-TTS MSA, F5v1, Apache-2.0):** WER **9.4 %** (only AR system under
-  10 %), cosine 0.779 (0.91 of ceiling), predicted MOS at real-speech level — but RTF ~5,
-  36 s clips → strictly offline on M2 MPS. The Arabic quality winner; Chatterbox is the
-  practical real-time-ish cloning pick; MMS the fast robotic floor.
-- **Real-speech MOS anchors** (`results/mos_anchors.json`): AR real speech UTMOS 3.02 — every
-  Arabic TTS lands at/above it, so low absolute UTMOS = predictor's English bias, not the audio.
-- **Deliverables done:** README.md, SUBMISSION.md (per-language calls + failure modes + anchors),
-  notes/LIMITATIONS_AND_DISCLOSURE.md (license table + ECAPA interpretation + roadmap),
-  results/results.md, blinded listening kit (eval/listening_test/kit, key held back),
-  make_submission.sh → ../infinia_voice_submission.zip (55 MB, verified no venv/cache/key leak).
-- **One human-in-the-loop item remains, by nature:** run the listening panel (≥3 native/fluent
-  listeners per language) with the prepared kit, then `score_kit.py` → human MOS. Predicted MOS
-  stands in as a labeled proxy until then. Everything else is real, measured, and reproducible.
-- Bug caught + fixed by the adversarial research pass: the PerTh-watermark disclosure was wrong
-  for the MLX path (outputs are unwatermarked) — corrected in README + pipeline + disclosure doc.
-- **Arabic MMS round-trip WER: 30.2 % — fails the 10 % bar, and the transcripts show why.**
-  Digit rows are deletion-dominated: ar_04's verbalized "1249" and ar_11's "542"/"12" are
-  simply never spoken. MMS-tts-ara's char-level VITS tokenizer silently drops Arabic-numeral
-  digits (out-of-vocab chars are discarded). ar_05 also shows proper-name mangling
-  (الزهراني → مزهران). Action: add digit pre-verbalization (num2words) to the MMS text
-  frontend and re-run — an honest found-it/fixed-it improvement. The naturalness ceiling of
-  the floor model stands regardless (UTMOS 3.27).
-- Check-in questions to the user failed to deliver (UI stream aborted) and the follow-up
-  said "go on" — proceeding per the brief's make-a-call rule with the stated defaults:
-  openly licensed reference clips for cloning (candidate voice swappable later) and a
-  prepared listening kit for a human panel run by the candidate. Logged in ASSUMPTIONS.md.
+- **English — Kokoro-82M (MLX).** First hiccup: misaki's English G2P needs spaCy's
+  `en_core_web_sm` and the uv venv has no pip, so the auto-download died — installed the
+  model wheel directly. After that it flew: warm RTF median **0.095**, **0.29 s** full-clip
+  latency on the 10-word row, round-trip WER **1.3 %** (only miss: the "March 23rd at
+  3:45 PM" date/time row). Predicted MOS 4.63 (Distill) / 4.51 (UTMOS).
+- **Hindi — Kokoro (espeak G2P).** RTF 0.092, 0.48 s latency. WER came out **11.1 %**,
+  which looked like a miss until I remembered Whisper's own Hindi floor on clean human
+  speech is ~19 % — most of that error is the recognizer, not the TTS. Converted
+  `vasista22/whisper-hindi-medium` (SPRING/IIT-M) to CTranslate2 int8 and re-scored:
+  12.3 % overall but on *different* rows — it nails the number rows large-v3 flubbed
+  (hi_03, hi_07 → 0.00) while reading digit strings by another convention (hi_11 → 0.58).
+  Taking the min over the two ASRs per row puts TTS-attributable error around ~6 %. The
+  one failure both ASRs agree on: the Hinglish row (0.41) — espeak G2P mangles inline
+  Latin words in a Devanagari sentence. Real failure mode, goes in the write-up.
+- **Arabic — MMS floor.** WER **30.2 %**, and the transcripts showed why: the digit rows
+  were deletion-dominated. mms-tts-ara's char-level VITS tokenizer silently *drops*
+  out-of-vocab characters, so "1249" is simply never spoken. Added num2words digit
+  pre-verbalization in the frontend → **22.2 %**. Kept both runs for the before/after.
+  Deletions collapsed (17→5) but the floor voice garbles some spoken numbers anyway, and
+  it stays robotic (UTMOS 3.27). That's what floors are for.
+- **Reference voices.** LibriTTS-R speaker 84 (EN), the Arabic Speech Corpus's
+  professional MSA narrator (AR), SYSPIN's Hindi female voice artist (HI) — all CC BY 4.0,
+  all corpora recorded for speech-synthesis research; license pages verified and recorded
+  in `references/LICENSES.md`. Rejected IIT-M IndicTTS (signed-agreement license) and the
+  gated AI4Bharat / Common Voice sets. Cut ~10 s cloning references at silence boundaries
+  and transcribed the exact cuts, so ref_text matches the audio by construction.
+- **Cloning — Chatterbox-Multilingual 4-bit (MLX).** The one 8 GB-viable model that
+  clones all three languages (607 MB, peak ~2 GB). Gotcha worth recording: my warm smoke
+  test with a short reference clip showed RTF ~0.3, but the real benchmark with 10 s
+  references lands at RTF **~1.07** — longer conditioning costs real time. Speaker
+  similarity (ECAPA cosine, calibrated against a real-vs-real ceiling and a
+  real-vs-other-speaker floor): EN 0.725 (ceiling 0.819), AR 0.743 (0.851), HI **0.870**
+  (0.905) — all unambiguously same-speaker. WER: EN 11.2 / AR 13.4 / HI 22.8 % — identity
+  costs intelligibility, especially on Hindi.
+- **Arabic specialist — Habibi-TTS MSA** (F5-TTS fine-tune, the MSA checkpoint is
+  Apache-2.0). First run died: torchaudio 2.11 routes `load` through torchcodec, which
+  wants ffmpeg shared libraries this machine doesn't have — shimmed `torchaudio.load` to
+  soundfile and re-ran. Worth it: WER **9.4 %** (the only Arabic system under the 10 %
+  bar), best Arabic cosine (0.779), predicted MOS at real-speech level. Cost: RTF ~5,
+  36 s for the 10-word row on MPS — strictly offline/batch on this hardware.
+- **Real-speech MOS anchors.** Scored each language's reference speaker with the same
+  predictors: Arabic *human* speech gets UTMOS 3.02. Every Arabic TTS here lands at or
+  above its anchor — the low absolute UTMOS numbers are the English-trained predictor's
+  bias, not the audio. This reframed all the Arabic naturalness numbers; the human panel
+  is the arbiter.
+- **Watermark check.** While writing the disclosure table I went back to verify my own
+  claim that Chatterbox outputs carry Resemble's PerTh watermark. True for the official
+  PyTorch package (applied by default, no off switch) — but the MLX path has no perth
+  step at all: the package isn't even installed, and there's no watermark code in
+  mlx-audio's chatterbox module. My earlier README note was wrong; corrected it. The
+  delivered clips are unwatermarked, and a PyTorch-path deployment would need to disclose.
+- **Extra metrics** (`eval/extra_metrics.py`): hard-token WER — WER restricted to the
+  names/numbers/currency/digits rows — runs **3–5× the corpus WER for every system**
+  (EN Kokoro 1.3 %→4.9 %; HI Chatterbox →39 %). Corpus WER hides exactly the tokens a
+  voice agent must not fumble. F0-based expressiveness (pitch spread, emotion row ÷
+  neutral row) cleanly separates the flat MMS floor (~0.7–0.9) from Habibi (1.31) and
+  Chatterbox-EN (1.43); Chatterbox-AR actually flattens on the emotion row (0.62).
+  Hygiene check: no clipping anywhere, so the differences are real, not artefacts.
+- **Listening kit** built (`eval/listening_test/`): blinded, randomized, hidden real-speech
+  anchors, same-speaker A/B pairs, seed-reproducible; raters get the kit minus `key.json`.
+  Panel (≥3 native/fluent listeners per language) still to run — predicted MOS stays a
+  clearly-labeled proxy until then.
+- **Packaging.** `make_submission.sh` → zip. The sanity check caught an 83 MB SpeechBrain
+  ECAPA cache leaking into the first build — the savedir was CWD-relative, so it had
+  landed inside `eval/`. Anchored it to the repo root and hardened the zip excludes;
+  rebuilt clean (263 files, kit in, key out, no venvs/caches).

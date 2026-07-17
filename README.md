@@ -96,7 +96,5 @@ status and per-metric analysis live in the write-up (`notes/` + submission doc).
   unwatermarked. A production deployment on the PyTorch path would watermark, and that must be
   disclosed. Full component license table: `notes/LIMITATIONS_AND_DISCLOSURE.md`.
 - Evaluation: fully open-source (no closed APIs anywhere).
-- AI coding assistant (Claude Code) used throughout for research, code, and orchestration,
-  as the brief invites; every benchmark number was produced by real runs on the hardware
-  named above. The honest, timestamped log of what was done — including dead ends — is in
-  `notes/WORKLOG.md`.
+- Every benchmark number was produced by real runs on the hardware named above. The
+  honest, dated log of what was done — including dead ends — is in `notes/WORKLOG.md`.

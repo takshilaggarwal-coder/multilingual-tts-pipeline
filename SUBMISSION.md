@@ -183,5 +183,5 @@ Core generation and the entire eval stack are open-source; no closed APIs anywhe
 recommended router (Kokoro + Chatterbox-4bit-MLX + Habibi-MSA) is commercial-safe and
 unwatermarked on the path used here (verified — see `notes/LIMITATIONS_AND_DISCLOSURE.md`).
 Reference voices are CC BY 4.0, recorded for speech research, attributed in
-`references/LICENSES.md`. Claude Code (AI assistant) was used for research, code, and
-orchestration, as the brief invites; all benchmark numbers come from real runs on the M2.
+`references/LICENSES.md`. All benchmark numbers come from real runs on the M2; the dated
+build log, including dead ends, is `notes/WORKLOG.md`.

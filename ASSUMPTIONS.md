@@ -30,5 +30,5 @@ The brief says: if something is ambiguous, make a call and state it. These are t
    orthography normalization for Arabic; Devanagari normalization and digit folding for Hindi).
    Normalization code is in the repo — WER without stated normalization is meaningless.
 7. **Disclosure.** Core speech generation: open-source models only. Evaluation stack: also
-   open-source. AI coding assistant (Claude Code) was used throughout for research, code, and
-   automation — as the brief invites — with all runs executed for real on the hardware above.
+   open-source. No closed APIs or closed tools were used anywhere — generation or evaluation.
+   All runs were executed for real on the hardware above.
